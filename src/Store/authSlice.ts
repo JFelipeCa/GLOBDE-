@@ -1,19 +1,30 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { isAxiosError } from 'axios';
-import { loginUsuario } from '../api/globdeApi';
+import { loginUsuario, actualizarPerfil } from '../api/globdeApi';
 import type { EstadoCarga, LoginPayload, PerfilPayload, Usuario } from '../types';
-import { actualizarPerfil } from '../api/globdeApi';
+
+const STORAGE_KEY = 'globde_usuario';
 
 interface AuthState {
   usuario: Usuario | null;
-  estado: EstadoCarga;
-  error: string | null;
+  estado:  EstadoCarga;
+  error:   string | null;
+}
+
+// Recuperar sesión guardada al cargar la app
+function cargarSesionGuardada(): Usuario | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as Usuario) : null;
+  } catch {
+    return null;
+  }
 }
 
 const initialState: AuthState = {
-  usuario: null,
-  estado: 'inactivo',
-  error: null,
+  usuario: cargarSesionGuardada(),
+  estado:  'inactivo',
+  error:   null,
 };
 
 function obtenerMensajeError(error: unknown) {
@@ -21,7 +32,7 @@ function obtenerMensajeError(error: unknown) {
     const detalle = error.response?.data as { detail?: string } | undefined;
     return detalle?.detail || error.message;
   }
-  return 'Ocurrio un error inesperado';
+  return 'Ocurrió un error inesperado';
 }
 
 export const iniciarSesion = createAsyncThunk(
@@ -55,26 +66,30 @@ const authSlice = createSlice({
   reducers: {
     cerrarSesion(state) {
       state.usuario = null;
-      state.estado = 'inactivo';
-      state.error = null;
+      state.estado  = 'inactivo';
+      state.error   = null;
+      localStorage.removeItem(STORAGE_KEY);
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(iniciarSesion.pending, (state) => {
         state.estado = 'cargando';
-        state.error = null;
+        state.error  = null;
       })
       .addCase(iniciarSesion.fulfilled, (state, action) => {
-        state.estado = 'correcto';
+        state.estado  = 'correcto';
         state.usuario = action.payload;
+        // Guardar sesión en localStorage para sobrevivir recargas
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(action.payload));
       })
       .addCase(iniciarSesion.rejected, (state, action) => {
         state.estado = 'error';
-        state.error = String(action.payload || 'No se pudo iniciar sesion');
+        state.error  = String(action.payload || 'No se pudo iniciar sesión');
       })
       .addCase(guardarPerfilUsuario.fulfilled, (state, action) => {
         state.usuario = action.payload;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(action.payload));
       });
   },
 });

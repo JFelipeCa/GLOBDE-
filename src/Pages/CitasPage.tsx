@@ -5,47 +5,47 @@ import { ROL_BARBERO, ROL_CLIENTE, type Cita, type CitaPayload } from '../types'
 import { claseEstado, formatearFecha, formatearMoneda } from '../utils/formatters';
 
 const estadoInicial: CitaPayload = {
-  id_cliente: 0,
-  id_usuario: 0,
-  id_servicio: 0,
-  fecha: '',
-  hora: '',
-  estado: 'pendiente',
-  observaciones: '',
+  id_cliente: 0, id_usuario: 0, id_servicio: 0,
+  fecha: '', hora: '', estado: 'pendiente', observaciones: '',
 };
+
+const ESTADOS_ADMIN = ['todos', 'pendiente', 'confirmada', 'completada', 'cancelada', 'no asistio'] as const;
 
 function CitasPage() {
   const dispatch = useAppDispatch();
-  const { usuario } = useAppSelector((state) => state.auth);
-  const { usuarios, clientes, servicios, citas } = useAppSelector((state) => state.data);
-  const [formulario, setFormulario] = useState<CitaPayload>(estadoInicial);
-  const [idEditando, setIdEditando] = useState<number | null>(null);
-  const [mensaje, setMensaje] = useState('');
+  const { usuario } = useAppSelector((s) => s.auth);
+  const { usuarios, clientes, servicios, citas } = useAppSelector((s) => s.data);
 
-  const clienteActual = clientes.find((cliente) => cliente.id_usuario === usuario?.id_usuario);
-  const esCliente = usuario?.id_rol === ROL_CLIENTE;
-  const barberos = usuarios.filter((item) => item.id_rol === ROL_BARBERO);
+  const [formulario,   setFormulario]   = useState<CitaPayload>(estadoInicial);
+  const [idEditando,   setIdEditando]   = useState<number | null>(null);
+  const [mensaje,      setMensaje]      = useState('');
+  const [filtroEstado, setFiltroEstado] = useState('todos');
+  const [mostrarForm,  setMostrarForm]  = useState(false);
+
+  const clienteActual = clientes.find((c) => c.id_usuario === usuario?.id_usuario);
+  const esCliente     = usuario?.id_rol === ROL_CLIENTE;
+  const barberos      = usuarios.filter((u) => u.id_rol === ROL_BARBERO);
 
   const citasVisibles = useMemo(() => {
-    if (esCliente) {
-      return citas.filter((cita) => cita.id_cliente === clienteActual?.id_cliente);
-    }
-    if (usuario?.id_rol === ROL_BARBERO) {
-      return citas.filter((cita) => cita.id_usuario === usuario.id_usuario);
-    }
-    return citas;
-  }, [citas, clienteActual?.id_cliente, esCliente, usuario]);
+    let lista = citas;
+    if (esCliente)                              lista = lista.filter((c) => c.id_cliente === clienteActual?.id_cliente);
+    else if (usuario?.id_rol === ROL_BARBERO)   lista = lista.filter((c) => c.id_usuario === usuario.id_usuario);
+    if (!esCliente && filtroEstado !== 'todos') lista = lista.filter((c) => c.estado === filtroEstado);
+    return [...lista].sort((a, b) => `${b.fecha}T${b.hora}`.localeCompare(`${a.fecha}T${a.hora}`));
+  }, [citas, clienteActual, esCliente, usuario, filtroEstado]);
 
   const cambiarCampo = (campo: keyof CitaPayload, valor: string) => {
-    setFormulario((actual) => ({
-      ...actual,
-      [campo]: ['id_cliente', 'id_usuario', 'id_servicio'].includes(campo) ? Number(valor) : valor,
+    setFormulario((prev) => ({
+      ...prev,
+      [campo]: ['id_cliente','id_usuario','id_servicio'].includes(campo) ? Number(valor) : valor,
     }));
   };
 
   const guardar = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const payload = esCliente && clienteActual ? { ...formulario, id_cliente: clienteActual.id_cliente } : formulario;
+    const payload = esCliente && clienteActual
+      ? { ...formulario, id_cliente: clienteActual.id_cliente }
+      : formulario;
     const resultado = idEditando
       ? await dispatch(editarCita({ idCita: idEditando, payload }))
       : await dispatch(registrarCita(payload));
@@ -53,7 +53,8 @@ function CitasPage() {
     if (registrarCita.fulfilled.match(resultado) || editarCita.fulfilled.match(resultado)) {
       setFormulario(estadoInicial);
       setIdEditando(null);
-      setMensaje(idEditando ? 'Cita actualizada correctamente.' : 'Cita registrada correctamente.');
+      setMostrarForm(false);
+      setMensaje(idEditando ? '✅ Cita actualizada.' : '✅ Cita registrada correctamente.');
     } else {
       setMensaje(String(resultado.payload || 'No se pudo guardar la cita.'));
     }
@@ -62,131 +63,147 @@ function CitasPage() {
   const cargarEdicion = (cita: Cita) => {
     setIdEditando(cita.id_cita);
     setFormulario({
-      id_cliente: cita.id_cliente,
-      id_usuario: cita.id_usuario,
-      id_servicio: cita.id_servicio,
-      fecha: cita.fecha,
-      hora: cita.hora,
-      estado: cita.estado,
-      observaciones: cita.observaciones,
+      id_cliente: cita.id_cliente, id_usuario: cita.id_usuario,
+      id_servicio: cita.id_servicio, fecha: cita.fecha,
+      hora: cita.hora, estado: cita.estado, observaciones: cita.observaciones,
     });
+    setMostrarForm(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const conteoAdmin = (estado: string) =>
+    estado === 'todos' ? citas.length : citas.filter((c) => c.estado === estado).length;
 
   return (
     <main className="container page-shell">
-      <div className="page-heading">
-        <h1>{esCliente ? 'Mis citas' : 'Gestion de citas'}</h1>
-        <p>Agenda conectada a la API local segun rol de acceso.</p>
+
+      {/* HEADER */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+        <div className="page-heading">
+          <span className="eyebrow">Agenda</span>
+          <h1>📅 {esCliente ? 'Mis citas' : 'Gestión de citas'}</h1>
+          <p>{esCliente ? 'Consulta y gestiona tus reservas.' : 'Administra todas las citas del sistema.'}</p>
+        </div>
+        <button type="button" style={{ marginTop: '8px' }}
+          onClick={() => { setMostrarForm(!mostrarForm); setIdEditando(null); setFormulario(estadoInicial); }}>
+          {mostrarForm ? '✕ Cerrar' : '+ Nueva cita'}
+        </button>
       </div>
 
-      <section className="panel-card">
-        <div className="panel-title">
-          <div>
-            <h2>{idEditando ? 'Editar cita' : 'Nueva cita'}</h2>
-            <p>Selecciona cliente, barbero, servicio y horario.</p>
+      {/* FORMULARIO COLAPSABLE */}
+      {mostrarForm && (
+        <section className="panel-card">
+          <div className="panel-title">
+            <div>
+              <h2>{idEditando ? '✏️ Editar cita' : '📅 Nueva cita'}</h2>
+              <p>Selecciona servicio, barbero, fecha y hora.</p>
+            </div>
           </div>
-        </div>
-
-        <form className="form-agendar" onSubmit={guardar}>
-          {!esCliente && (
+          <form className="citas-form" onSubmit={guardar}>
+            {!esCliente && (
+              <label className="form-group">
+                👤 Cliente
+                <select value={formulario.id_cliente || ''} onChange={(e) => cambiarCampo('id_cliente', e.target.value)} required>
+                  <option value="">Selecciona un cliente</option>
+                  {clientes.map((c) => <option key={c.id_cliente} value={c.id_cliente}>{c.nombre}</option>)}
+                </select>
+              </label>
+            )}
             <label className="form-group">
-              Cliente
-              <select value={formulario.id_cliente || ''} onChange={(event) => cambiarCampo('id_cliente', event.target.value)} required>
-                <option value="">Selecciona un cliente</option>
-                {clientes.map((cliente) => (
-                  <option key={cliente.id_cliente} value={cliente.id_cliente}>
-                    {cliente.nombre}
-                  </option>
-                ))}
+              💈 Barbero
+              <select value={formulario.id_usuario || ''} onChange={(e) => cambiarCampo('id_usuario', e.target.value)} required>
+                <option value="">Selecciona un barbero</option>
+                {barberos.map((b) => <option key={b.id_usuario} value={b.id_usuario}>{b.nombre}</option>)}
               </select>
             </label>
-          )}
-
-          <label className="form-group">
-            Barbero
-            <select value={formulario.id_usuario || ''} onChange={(event) => cambiarCampo('id_usuario', event.target.value)} required>
-              <option value="">Selecciona un barbero</option>
-              {barberos.map((barbero) => (
-                <option key={barbero.id_usuario} value={barbero.id_usuario}>
-                  {barbero.nombre}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="form-group">
-            Servicio
-            <select value={formulario.id_servicio || ''} onChange={(event) => cambiarCampo('id_servicio', event.target.value)} required>
-              <option value="">Selecciona un servicio</option>
-              {servicios.map((servicio) => (
-                <option key={servicio.id_servicio} value={servicio.id_servicio}>
-                  {servicio.nombre}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="form-group">
-            Fecha
-            <input type="date" value={formulario.fecha} onChange={(event) => cambiarCampo('fecha', event.target.value)} required />
-          </label>
-
-          <label className="form-group">
-            Hora
-            <input type="time" value={formulario.hora} onChange={(event) => cambiarCampo('hora', event.target.value)} required />
-          </label>
-
-          {!esCliente && (
             <label className="form-group">
-              Estado
-              <select value={formulario.estado} onChange={(event) => cambiarCampo('estado', event.target.value)}>
-                <option value="pendiente">Pendiente</option>
-                <option value="confirmada">Confirmada</option>
-                <option value="cancelada">Cancelada</option>
-                <option value="completada">Completada</option>
-                <option value="no asistio">No asistio</option>
+              ✂️ Servicio
+              <select value={formulario.id_servicio || ''} onChange={(e) => cambiarCampo('id_servicio', e.target.value)} required>
+                <option value="">Selecciona un servicio</option>
+                {servicios.map((s) => <option key={s.id_servicio} value={s.id_servicio}>{s.nombre} — {formatearMoneda(s.precio)}</option>)}
               </select>
             </label>
-          )}
+            <label className="form-group">
+              📅 Fecha
+              <input type="date" value={formulario.fecha} min={new Date().toISOString().split('T')[0]} onChange={(e) => cambiarCampo('fecha', e.target.value)} required />
+            </label>
+            <label className="form-group">
+              🕐 Hora
+              <input type="time" value={formulario.hora} onChange={(e) => cambiarCampo('hora', e.target.value)} required />
+            </label>
+            {!esCliente && (
+              <label className="form-group">
+                🔖 Estado
+                <select value={formulario.estado} onChange={(e) => cambiarCampo('estado', e.target.value)}>
+                  <option value="pendiente">Pendiente</option>
+                  <option value="confirmada">Confirmada</option>
+                  <option value="cancelada">Cancelada</option>
+                  <option value="completada">Completada</option>
+                  <option value="no asistio">No asistió</option>
+                </select>
+              </label>
+            )}
+            <label className="form-group citas-form-full">
+              💬 Observaciones
+              <textarea value={formulario.observaciones} onChange={(e) => cambiarCampo('observaciones', e.target.value)} placeholder="Alguna preferencia o nota especial..." maxLength={300} />
+            </label>
+            <div className="citas-form-actions">
+              <button type="submit">{idEditando ? 'Guardar cambios' : 'Registrar cita'}</button>
+              {idEditando && (
+                <button type="button" className="btn-secundario" onClick={() => { setIdEditando(null); setMostrarForm(false); }}>Cancelar</button>
+              )}
+            </div>
+          </form>
+          {mensaje && <p className="message-box">{mensaje}</p>}
+        </section>
+      )}
 
-          <label className="form-group full-width">
-            Observaciones
-            <textarea value={formulario.observaciones} onChange={(event) => cambiarCampo('observaciones', event.target.value)} />
-          </label>
+      {!mostrarForm && mensaje && <p className="message-box">{mensaje}</p>}
 
-          <button type="submit">{idEditando ? 'Guardar cambios' : 'Registrar cita'}</button>
-          {idEditando && (
-            <button type="button" className="btn-secundario" onClick={() => setIdEditando(null)}>
-              Cancelar edicion
+      {/* FILTROS — solo para admin y barbero */}
+      {!esCliente && (
+        <div className="citas-filtros">
+          {ESTADOS_ADMIN.map((estado) => (
+            <button key={estado} type="button"
+              onClick={() => setFiltroEstado(estado)}
+              className={filtroEstado === estado ? 'filtro-btn filtro-btn-active' : 'filtro-btn'}>
+              {estado === 'todos' ? 'Todas' : estado} ({conteoAdmin(estado)})
             </button>
-          )}
-        </form>
-        {mensaje && <p className="message-box">{mensaje}</p>}
-      </section>
+          ))}
+        </div>
+      )}
 
+      {/* LISTA */}
       <ul id="listaCitas">
+        {citasVisibles.length === 0 && (
+          <li style={{ padding: '32px', textAlign: 'center', color: '#aaa' }}>
+            {esCliente ? 'Aún no tienes citas registradas. ¡Agenda la primera desde tu panel!' : `No hay citas ${filtroEstado !== 'todos' ? `con estado "${filtroEstado}"` : 'registradas'}.`}
+          </li>
+        )}
         {citasVisibles.map((cita) => {
-          const cliente = clientes.find((item) => item.id_cliente === cita.id_cliente);
-          const barbero = usuarios.find((item) => item.id_usuario === cita.id_usuario);
-          const servicio = servicios.find((item) => item.id_servicio === cita.id_servicio);
+          const cliente  = clientes.find((c) => c.id_cliente === cita.id_cliente);
+          const barbero  = usuarios.find((u) => u.id_usuario === cita.id_usuario);
+          const servicio = servicios.find((s) => s.id_servicio === cita.id_servicio);
           return (
             <li key={cita.id_cita}>
               <div className="item-head">
-                <span className="item-title">{servicio?.nombre || 'Sin servicio'}</span>
+                <span className="item-title">✂️ {servicio?.nombre || 'Sin servicio'}</span>
                 <span className={claseEstado(cita.estado)}>{cita.estado}</span>
               </div>
               <div className="item-meta">
-                <span>Cliente: {cliente?.nombre || 'Sin cliente'}</span>
-                <span>Barbero: {barbero?.nombre || 'Sin barbero'}</span>
-                <span>{formatearFecha(cita.fecha)} | {cita.hora}</span>
-                <span>{formatearMoneda(servicio?.precio || 0)}</span>
+                {!esCliente && <span>👤 {cliente?.nombre || 'Sin cliente'}</span>}
+                <span>💈 {barbero?.nombre || 'Sin barbero'}</span>
+                <span>📅 {formatearFecha(cita.fecha)} | {cita.hora}</span>
+                <span>💰 {formatearMoneda(servicio?.precio || 0)}</span>
               </div>
-              {cita.observaciones && <div className="item-subtitle">{cita.observaciones}</div>}
+              {cita.observaciones && (
+                <div className="item-subtitle" style={{ marginTop: '6px', fontSize: '13px', color: '#777' }}>
+                  💬 {cita.observaciones}
+                </div>
+              )}
               {!esCliente && (
-                <div className="item-actions">
-                  <button type="button" className="btn-secundario" onClick={() => cargarEdicion(cita)}>
-                    Editar
-                  </button>
+                <div className="item-actions" style={{ marginTop: '10px' }}>
+                  <button type="button" className="btn-secundario" onClick={() => cargarEdicion(cita)}>✏️ Editar</button>
                 </div>
               )}
             </li>

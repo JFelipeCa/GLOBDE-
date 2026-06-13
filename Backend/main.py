@@ -100,7 +100,7 @@ def serializar(row: dict) -> dict:
 
 
 def ocultar_contrasena(usuario: dict) -> dict:
-    return {k: v for k, v in usuario.items() if k != "contrasena"}
+    return {k: v for k, v in usuario.items() if k != "contraseña"}
 
 
 # ============================================================
@@ -163,7 +163,7 @@ def login(payload: LoginRequest):
         (payload.correo, payload.contrasena),
     )
     if not usuario:
-        raise HTTPException(status_code=401, detail="Correo o contrasena incorrectos")
+        raise HTTPException(status_code=401, detail="Correo o contraseña incorrectos")
     return ocultar_contrasena(usuario)
 
 
