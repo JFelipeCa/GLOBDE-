@@ -17,36 +17,38 @@
 
 ---
 
-## 📖 Tabla de Contenido
+## Tabla de Contenido
 
-- [Descripción](#-descripción)
-- [Objetivo](#-objetivo)
-- [Alcance del Sistema](#-alcance-del-sistema)
-- [Arquitectura](#-arquitectura)
-- [Stack Tecnológico](#-stack-tecnológico)
-- [Funcionalidades por Rol](#-funcionalidades-por-rol)
-- [Módulos del Sistema](#-módulos-del-sistema)
-- [Modelo de Base de Datos](#-modelo-de-base-de-datos)
-- [Historias de Usuario](#-historias-de-usuario)
-- [Casos de Uso](#-casos-de-uso)
-- [Paleta de Diseño](#-paleta-de-diseño)
-- [Estructura del Proyecto](#-estructura-del-proyecto)
-- [Instalación y Puesta en Marcha](#-instalación-y-puesta-en-marcha)
-- [Metodología de Trabajo](#-metodología-de-trabajo)
-- [Equipo de Desarrollo](#-equipo-de-desarrollo)
-- [Limitaciones](#-limitaciones)
+- [Descripción](#descripción)
+- [Objetivo](#objetivo)
+- [Alcance del Sistema](#alcance-del-sistema)
+- [Arquitectura](#arquitectura)
+- [Stack Tecnológico](#stack-tecnológico)
+- [Funcionalidades por Rol](#funcionalidades-por-rol)
+- [Módulos del Sistema](#módulos-del-sistema)
+- [Modelo de Base de Datos](#modelo-de-base-de-datos)
+- [Historias de Usuario](#historias-de-usuario)
+- [Casos de Uso](#casos-de-uso)
+- [Paleta de Diseño](#paleta-de-diseño)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Instalación y Puesta en Marcha](#instalación-y-puesta-en-marcha)
+- [Metodología de Trabajo](#metodología-de-trabajo)
+- [Equipo de Desarrollo](#equipo-de-desarrollo)
+- [Limitaciones](#limitaciones)
 
 ---
 
-## 📌 Descripción
+## Descripción
 
 **Globde** es una solución web integral para la gestión de citas en barberías, desarrollada por un equipo de aprendices ADSO del SENA. El sistema permite a los **clientes** reservar citas de forma autónoma, a los **barberos** organizar su agenda diaria y a los **administradores** controlar clientes, servicios, personal, reportes y fidelización — todo desde una interfaz moderna, segura y responsive.
 
-## 🎯 Objetivo
+📄 Documento completo: [Propuesta Técnica (PDF)](<docs/PROPUESTA TÉCNICA.pdf>)
+
+## Objetivo
 
 Optimizar el proceso de agendamiento de citas en una barbería, mejorando la atención al cliente, reduciendo tiempos de espera y organizando eficientemente los horarios de servicios, clientes y barberos.
 
-## 🧭 Alcance del Sistema
+## Alcance del Sistema
 
 | ✅ Incluido en el sistema |
 |---|
@@ -59,7 +61,7 @@ Optimizar el proceso de agendamiento de citas en una barbería, mejorando la ate
 | Almacenamiento seguro de información en base de datos |
 | Diseño responsive (escritorio y móvil) |
 
-## 🏗️ Arquitectura
+## Arquitectura
 
 El sistema está construido bajo el patrón **Modelo–Vista–Controlador (MVC)**, separando la lógica de negocio, la interfaz de usuario y el control de solicitudes para facilitar el mantenimiento, la organización y la escalabilidad.
 
@@ -71,7 +73,7 @@ El sistema está construido bajo el patrón **Modelo–Vista–Controlador (MVC)
 └────────────────────┘                         └──────────────────────┘        └──────────────┘
 ```
 
-## 🛠️ Stack Tecnológico
+## Stack Tecnológico
 
 | Capa | Tecnologías |
 |---|---|
@@ -84,7 +86,7 @@ El sistema está construido bajo el patrón **Modelo–Vista–Controlador (MVC)
 
 > 💡 En la propuesta técnica inicial se consideró Java + Spring Boot para el backend; la implementación final del equipo migró a **FastAPI (Python)** por agilidad de desarrollo.
 
-## 👥 Funcionalidades por Rol
+## Funcionalidades por Rol
 
 <table>
 <tr><th>Rol</th><th>Puede hacer</th></tr>
@@ -102,7 +104,7 @@ El sistema está construido bajo el patrón **Modelo–Vista–Controlador (MVC)
 </tr>
 </table>
 
-## 🧩 Módulos del Sistema
+## Módulos del Sistema
 
 - 🔐 **Autenticación** — registro, login y recuperación de contraseña
 - 👤 **Gestión de Clientes** — registro, búsqueda, edición y eliminación
@@ -113,7 +115,7 @@ El sistema está construido bajo el patrón **Modelo–Vista–Controlador (MVC)
 - ⭐ **Fidelización** — acumulación y canje de puntos por servicio
 - 📊 **Reportes** — ingresos, ranking de servicios y desempeño por barbero, exportables a Excel/PDF
 
-## 🗄️ Modelo de Base de Datos
+## Modelo de Base de Datos
 
 La base de datos en **MySQL** está compuesta por:
 
@@ -122,7 +124,7 @@ La base de datos en **MySQL** está compuesta por:
 - **5 procedimientos almacenados** — lógica reutilizable para operaciones críticas (agendamiento, cálculo de puntos, reportes, etc.).
 - **30+ registros de prueba** para validación funcional.
 
-## 📋 Historias de Usuario
+## Historias de Usuario
 
 El proyecto cuenta con **33 Historias de Usuario (HU-01 a HU-33)**, cada una con su enunciado en formato *"Como [rol], quiero [funcionalidad], para [resultado]"* y sus respectivos criterios de aceptación. Cubren desde autenticación y gestión de clientes hasta reportes administrativos y lista de espera.
 
@@ -137,15 +139,15 @@ El proyecto cuenta con **33 Historias de Usuario (HU-01 a HU-33)**, cada una con
 | HU-29 a HU-32 | Reportes administrativos y exportación |
 | HU-33 | Lista de espera |
 
-📄 Documento completo: `Globde_HU_V2.xlsx`
+📄 Documento completo: [Globde_HU_V2.xlsx](docs/Globde_HU_V2.xlsx)
 
-## 🔄 Casos de Uso
+## Casos de Uso
 
 El sistema documenta **33 Casos de Uso (CU-01 a CU-33)**, alineados uno a uno con las Historias de Usuario, con actores, precondiciones, postcondiciones, secuencia normal, excepciones, rendimiento y frecuencia de uso. Adicionalmente se cuenta con **diagramas UML de casos de uso** que ilustran las relaciones `«include»` y `«extend»` entre procesos (por ejemplo: *Registrar Usuario* incluye *Validar Datos*, *Asignar Rol* y *Enviar Correo*).
 
-📄 Documentos: `Globde_Casos_de_Uso_V2_docx.pdf` · `Globde_Diagramas_de_Uso_V2_docx.pdf`
+📄 Documentos: [Casos de Uso (PDF)](docs/Globde_Casos_de_Uso_V2.docx.pdf) · [Diagramas de Casos de Uso (PDF)](docs/Globde_Diagramas_de_Uso_V2.docx.pdf)
 
-## 🎨 Paleta de Diseño
+## Paleta de Diseño
 
 <div>
 <img src="https://img.shields.io/badge/-000000?style=for-the-badge" height="30"/> Negro
@@ -156,7 +158,7 @@ El sistema documenta **33 Casos de Uso (CU-01 a CU-33)**, alineados uno a uno co
 
 Paleta derivada del logo de Globde, aplicada de forma consistente en landing page, dashboards y presentación oficial. Las interfaces orientadas al cliente evitan jerga técnica para mantener una experiencia amigable.
 
-## 📁 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 globde/
@@ -178,14 +180,14 @@ globde/
 │   ├── views.sql             # 3 vistas
 │   └── procedures.sql        # 5 procedimientos almacenados
 ├── docs/
-│   ├── PROPUESTA_TÉCNICA.pdf
+│   ├── PROPUESTA TÉCNICA.pdf
 │   ├── Globde_HU_V2.xlsx
-│   ├── Globde_Casos_de_Uso_V2_docx.pdf
-│   └── Globde_Diagramas_de_Uso_V2_docx.pdf
+│   ├── Globde_Casos_de_Uso_V2.docx.pdf
+│   └── Globde_Diagramas_de_Uso_V2.docx.pdf
 └── README.md
 ```
 
-## 🚀 Instalación y Puesta en Marcha
+## Instalación y Puesta en Marcha
 
 ```bash
 # 1. Clonar el repositorio
@@ -208,11 +210,11 @@ npm run dev
 # Importar schema.sql, views.sql y procedures.sql en MySQL Workbench
 ```
 
-## 🔁 Metodología de Trabajo
+## Metodología de Trabajo
 
 El proyecto se desarrolló bajo la metodología ágil **Scrum**, organizando el trabajo en **6 sprints** con un total de **33 historias de usuario** distribuidas según prioridad y dependencia funcional, documentadas en el Sprint Backlog del equipo.
 
-## 👨‍💻 Equipo de Desarrollo
+## Equipo de Desarrollo
 
 | Integrante | Rol principal |
 |---|---|
@@ -222,7 +224,7 @@ El proyecto se desarrolló bajo la metodología ágil **Scrum**, organizando el 
 
 Proyecto desarrollado como parte del programa **ADSO (Análisis y Desarrollo de Software)** – SENA CGMLTIC Fontibón.
 
-## ⚠️ Limitaciones
+## Limitaciones
 
 - Requiere conexión a internet para funcionar.
 - Solo usuarios registrados pueden agendar citas.
