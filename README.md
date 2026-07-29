@@ -218,11 +218,11 @@ El proyecto se desarrolló bajo la metodología ágil **Scrum**, organizando el 
 
 | Integrante | Rol principal |
 |---|---|
-| **Laura** | Frontend & UI/UX |
-| **Juan Felipe Cañón** | Desarrollo |
-| **Dayanna Patiño** | Desarrollo |
+| **Laura** | DB |
+| **Juan Felipe Cañón** | Backend |
+| **Dayanna Patiño** | Frontend |
 
-Proyecto desarrollado como parte del programa **ADSO (Análisis y Desarrollo de Software)** – SENA CGMLTIC Fontibón.
+Proyecto desarrollado como parte del programa **ADSO (Análisis y Desarrollo de Software)** 
 
 ## Limitaciones
 
@@ -236,6 +236,6 @@ Proyecto desarrollado como parte del programa **ADSO (Análisis y Desarrollo de 
 
 <div align="center">
 
-Hecho con 💈 y ☕ por el equipo Globde — SENA ADSO 2026
+Hecho con el <3 por el equipo Globde — SENA ADSO 2026
 
 </div>
