@@ -32,6 +32,7 @@
 - [Paleta de Diseño](#paleta-de-diseño)
 - [Estructura del Proyecto](#estructura-del-proyecto)
 - [Instalación y Puesta en Marcha](#instalación-y-puesta-en-marcha)
+- [Documentación Adicional](#documentación-adicional)
 - [Metodología de Trabajo](#metodología-de-trabajo)
 - [Equipo de Desarrollo](#equipo-de-desarrollo)
 - [Limitaciones](#limitaciones)
@@ -42,7 +43,7 @@
 
 **Globde** es una solución web integral para la gestión de citas en barberías, desarrollada por un equipo de aprendices ADSO del SENA. El sistema permite a los **clientes** reservar citas de forma autónoma, a los **barberos** organizar su agenda diaria y a los **administradores** controlar clientes, servicios, personal, reportes y fidelización — todo desde una interfaz moderna, segura y responsive.
 
-📄 Documento completo: [Propuesta Técnica (PDF)](<docs/PROPUESTA TÉCNICA.pdf>)
+📄 Documento completo: [Propuesta Técnica (PDF)](docs/anexos/PROPUESTA_TECNICA.pdf)
 
 ## Objetivo
 
@@ -77,10 +78,11 @@ El sistema está construido bajo el patrón **Modelo–Vista–Controlador (MVC)
 
 | Capa | Tecnologías |
 |---|---|
-| **Frontend** | React, TypeScript, Vite, Redux (authSlice), CSS |
-| **Backend** | FastAPI, Python |
-| **Base de Datos** | MySQL (11 tablas, 3 vistas, 5 procedimientos almacenados) |
-| **Control de versiones** | GitHub |
+| **Frontend** | React, TypeScript, Vite, Redux (authSlice, dataSlice), Axios |
+| **Backend** | FastAPI, Python, mysql-connector-python |
+| **Base de Datos** | MySQL (12 tablas: usuarios, roles, clientes, citas, servicios, facturas, etc.) |
+| **Contenedores** | Docker + Docker Compose (MySQL + Backend) |
+| **Control de versiones** | Git / GitHub |
 | **Entorno de desarrollo** | Visual Studio Code |
 | **Metodología** | Scrum |
 
@@ -117,16 +119,15 @@ El sistema está construido bajo el patrón **Modelo–Vista–Controlador (MVC)
 
 ## Modelo de Base de Datos
 
-La base de datos en **MySQL** está compuesta por:
+La base de datos en **MySQL** (`database/database.sql`) está compuesta actualmente por **12 tablas**:
 
-- **11 tablas** — usuarios, clientes, barberos, servicios, citas, horarios, puntos, notificaciones, lista de espera, calificaciones, días no laborales, entre otras.
-- **3 vistas SQL** — consultas optimizadas para reportes y disponibilidad.
-- **5 procedimientos almacenados** — lógica reutilizable para operaciones críticas (agendamiento, cálculo de puntos, reportes, etc.).
-- **30+ registros de prueba** para validación funcional.
+`usuarios` · `roles` · `clientes` · `citas` · `servicios` · `catalogo_cortes` · `facturas` · `detalle_factura` · `penalidades` · `ranking_barberos` · `tokens_recuperacion` · `password_reset_tokens`
+
+> 📌 Vistas SQL y procedimientos almacenados adicionales están contemplados para próximas iteraciones del proyecto.
 
 ## Historias de Usuario
 
-El proyecto cuenta con **33 Historias de Usuario (HU-01 a HU-33)**, cada una con su enunciado en formato *"Como [rol], quiero [funcionalidad], para [resultado]"* y sus respectivos criterios de aceptación. Cubren desde autenticación y gestión de clientes hasta reportes administrativos y lista de espera.
+El proyecto cuenta con **33 Historias de Usuario (HU-01 a HU-33)**, cada una en su propio archivo, con formato *"Como... quiero... para..."* y criterios de aceptación detallados. Cubren desde autenticación y gestión de clientes hasta reportes administrativos y lista de espera.
 
 | Rango | Enfoque principal |
 |---|---|
@@ -139,13 +140,13 @@ El proyecto cuenta con **33 Historias de Usuario (HU-01 a HU-33)**, cada una con
 | HU-29 a HU-32 | Reportes administrativos y exportación |
 | HU-33 | Lista de espera |
 
-📄 Documento completo: [Globde_HU_V2.xlsx](docs/Globde_HU_V2.xlsx)
+📄 **[Ver todas las Historias de Usuario →](docs/requisitos.md)**
 
 ## Casos de Uso
 
-El sistema documenta **33 Casos de Uso (CU-01 a CU-33)**, alineados uno a uno con las Historias de Usuario, con actores, precondiciones, postcondiciones, secuencia normal, excepciones, rendimiento y frecuencia de uso. Adicionalmente se cuenta con **diagramas UML de casos de uso** que ilustran las relaciones `«include»` y `«extend»` entre procesos (por ejemplo: *Registrar Usuario* incluye *Validar Datos*, *Asignar Rol* y *Enviar Correo*).
+El sistema documenta **33 Casos de Uso (CU-01 a CU-33)**, alineados uno a uno con las Historias de Usuario. Cada archivo incluye actores, precondiciones, postcondiciones, secuencia normal, excepciones, rendimiento, frecuencia de uso y su **diagrama de caso de uso** (relaciones `«include»`/`«extend»` renderizadas con Mermaid).
 
-📄 Documentos: [Casos de Uso (PDF)](docs/Globde_Casos_de_Uso_V2.docx.pdf) · [Diagramas de Casos de Uso (PDF)](docs/Globde_Diagramas_de_Uso_V2.docx.pdf)
+📄 **[Ver todos los Casos de Uso →](docs/requisitos.md)**
 
 ## Paleta de Diseño
 
@@ -161,54 +162,111 @@ Paleta derivada del logo de Globde, aplicada de forma consistente en landing pag
 ## Estructura del Proyecto
 
 ```
-globde/
-├── frontend/                 # React + TypeScript + Vite
+GLOBDE/
+├── frontend/                    # React + TypeScript + Vite
+│   ├── public/
 │   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── store/            # Redux - authSlice (persistencia con localStorage)
-│   │   └── routes/           # react-router-dom
-│   └── package.json
-├── backend/                  # FastAPI + Python
+│   │   ├── api/                  # Cliente Axios y llamadas a la API
+│   │   ├── assets/
+│   │   ├── components/           # Componentes reutilizables
+│   │   ├── pages/                 # Vistas (Landing, Login, Dashboards, Citas...)
+│   │   ├── store/                  # Redux — authSlice, dataSlice (persistencia con localStorage)
+│   │   └── utils/
+│   ├── package.json
+│   └── vite.config.ts
+├── backend/                     # FastAPI + Python
 │   ├── app/
-│   │   ├── routers/
-│   │   ├── models/
-│   │   └── services/
+│   │   └── main.py               # API (endpoints, conexión MySQL)
+│   ├── .env.example              # Plantilla de variables de entorno
+│   ├── Dockerfile
 │   └── requirements.txt
 ├── database/
-│   ├── schema.sql            # 11 tablas
-│   ├── views.sql             # 3 vistas
-│   └── procedures.sql        # 5 procedimientos almacenados
+│   └── database.sql              # Script de creación de la base de datos (12 tablas)
 ├── docs/
-│   ├── PROPUESTA TÉCNICA.pdf
-│   ├── Globde_HU_V2.xlsx
-│   ├── Globde_Casos_de_Uso_V2.docx.pdf
-│   └── Globde_Diagramas_de_Uso_V2.docx.pdf
+│   ├── requisitos.md              # Índice de Historias de Usuario y Casos de Uso
+│   ├── requisitos/
+│   │   ├── HUs/                    # 33 Historias de Usuario (1 archivo por HU)
+│   │   ├── CUs/                    # 33 Casos de Uso con diagramas (1 archivo por CU)
+│   │   └── restricciones.md
+│   ├── referencia-tecnica/
+│   │   ├── architecture.md         # Arquitectura y diagramas del sistema
+│   │   ├── database-schema.md      # Esquema completo de la base de datos
+│   │   └── api-endpoints.md        # Todos los endpoints documentados
+│   ├── setup/
+│   │   ├── con-docker.md           # Guía de instalación con Docker
+│   │   └── sin-docker.md           # Guía de instalación manual
+│   └── anexos/                     # Documentos originales (PDF/Excel de la propuesta)
+├── docker-compose.yml            # Levanta MySQL + Backend en contenedores
+├── .gitignore
 └── README.md
 ```
 
 ## Instalación y Puesta en Marcha
 
+### Opción A — Con Docker (recomendada)
+
 ```bash
 # 1. Clonar el repositorio
 git clone https://github.com/tu-usuario/globde.git
-cd globde
+cd GLOBDE
 
-# 2. Backend (FastAPI)
+# 2. Configurar variables de entorno del backend
+cd backend
+cp .env.example .env
+# Edita .env con tus valores (usuario y contraseña de MySQL)
+cd ..
+
+# 3. Levantar MySQL + Backend con Docker
+docker compose up -d
+
+# 4. Frontend (se ejecuta aparte, en modo desarrollo)
+cd frontend
+npm install
+npm run dev
+# → http://localhost:5173
+```
+
+### Opción B — Sin Docker (manual)
+
+```bash
+# Backend
 cd backend
 python -m venv venv
 source venv/bin/activate      # En Windows: venv\Scripts\activate
 pip install -r requirements.txt
+cp .env.example .env          # Ajusta los valores según tu MySQL local
 uvicorn app.main:app --reload
+# → http://localhost:8000
 
-# 3. Frontend (React + Vite)
-cd ../frontend
+# Frontend (en otra terminal)
+cd frontend
 npm install
 npm run dev
+# → http://localhost:5173
 
-# 4. Base de datos
-# Importar schema.sql, views.sql y procedures.sql en MySQL Workbench
+# Base de datos: importa database/database.sql en tu gestor de MySQL
 ```
+
+> 🪟 **Windows:** también puedes usar el script `Arrancar-Globde.bat` en la raíz del proyecto para iniciar todo automáticamente.
+
+> ⚠️ **Importante:** el archivo `.env` real **nunca** debe subirse al repositorio (ya está protegido en `.gitignore`). Usa siempre `.env.example` como plantilla.
+
+📚 Guías detalladas paso a paso: **[Con Docker](docs/setup/con-docker.md)** · **[Sin Docker](docs/setup/sin-docker.md)**
+
+## Documentación Adicional
+
+| Documento | Descripción |
+|---|---|
+| [`docs/requisitos.md`](docs/requisitos.md) | Índice de las 33 Historias de Usuario y sus Casos de Uso |
+| [`docs/requisitos/HUs/`](docs/requisitos/HUs) | Historias de Usuario, una por archivo |
+| [`docs/requisitos/CUs/`](docs/requisitos/CUs) | Casos de Uso con diagramas de flujo (Mermaid) |
+| [`docs/requisitos/restricciones.md`](docs/requisitos/restricciones.md) | Restricciones del proyecto |
+| [`docs/referencia-tecnica/architecture.md`](docs/referencia-tecnica/architecture.md) | Arquitectura general y diagramas del sistema |
+| [`docs/referencia-tecnica/database-schema.md`](docs/referencia-tecnica/database-schema.md) | Esquema completo de la base de datos (12 tablas) |
+| [`docs/referencia-tecnica/api-endpoints.md`](docs/referencia-tecnica/api-endpoints.md) | Todos los endpoints de la API documentados |
+| [`docs/setup/con-docker.md`](docs/setup/con-docker.md) | Guía de instalación con Docker |
+| [`docs/setup/sin-docker.md`](docs/setup/sin-docker.md) | Guía de instalación manual |
+| [`docs/anexos/`](docs/anexos) | Documentos originales de la propuesta (PDF/Excel) |
 
 ## Metodología de Trabajo
 

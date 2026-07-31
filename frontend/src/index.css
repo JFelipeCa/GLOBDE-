@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --negro:         #111111;
+  --negro-card:    #1a1a1a;
+  --negro-panel:   #222222;
+  --negro-borde:   #2a2a2a;
+  --blanco:        #ffffff;
+  --gris-claro:    #f7f7f7;
+  --gris:          #777777;
+  --gris-medio:    #aaaaaa;
+
+  --cyan:          #00d4c8;
+  --cyan-dim:      rgba(0, 212, 200, 0.12);
+  --cyan-borde:    rgba(0, 212, 200, 0.3);
+  --dorado:        #c9a84c;
+  --dorado-dim:    rgba(201, 168, 76, 0.15);
+
+  --error:         #e05252;
+  --exito:         #52b788;
+  --info:          #6da8ff;
+  --advertencia:   #f0a500;
+  
+  --radio:         8px;
+  --radio-lg:      14px;
+  --sombra:        0 4px 24px rgba(0, 0, 0, 0.08);
+  --sombra-cyan:   0 0 24px rgba(0, 212, 200, 0.12);
+
+  font-family: 'Inter', Arial, sans-serif;
+  color: var(--negro);
+  background: var(--blanco);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background-color: var(--blanco);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+#root {
+  min-height: 100vh;
+}
