@@ -1,0 +1,32 @@
+{
+  "name": "GLOBDE",
+  "//image": "Misma imagen universal que Codespaces usa por defecto (trae Docker, Node 20 y Python 3): queda fijada para que el setup.sh corra siempre igual.",
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+
+  "forwardPorts": [5173, 8000],
+  "portsAttributes": {
+    "5173": {
+      "label": "Frontend (Vite)",
+      "onAutoForward": "notify"
+    },
+    "8000": {
+      "label": "Backend (FastAPI)",
+      "onAutoForward": "silent"
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "dbaeumer.vscode-eslint"
+      ]
+    }
+  },
+
+  "//postCreateCommand": "Se ejecuta UNA sola vez al crear el Codespace: instala todo y levanta MySQL.",
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+
+  "//postStartCommand": "Cada vez que el Codespace se reanuda, garantiza que MySQL esté arriba (es idempotente).",
+  "postStartCommand": "docker compose up -d mysql || true"
+}
