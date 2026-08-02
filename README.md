@@ -1,299 +1,330 @@
-<div align="center">
+> **Proyecto formativo** — SENA | Programa ADSO (Análisis y Desarrollo de Software) — Febrero 2026
 
-# 💈 Globde
+# 💈 GLOBDE — Sistema Integral de Gestión de Citas y Barbería
 
-### Sistema de Agendamiento de Citas para Barbería
-
-*Reserva, gestiona y haz crecer tu barbería desde una sola plataforma.*
-
-![Status](https://img.shields.io/badge/estado-en%20desarrollo-yellow)
-![React](https://img.shields.io/badge/Frontend-React%20%2B%20TypeScript-61DAFB?logo=react&logoColor=black)
-![Vite](https://img.shields.io/badge/Bundler-Vite-646CFF?logo=vite&logoColor=white)
-![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688?logo=fastapi&logoColor=white)
-![MySQL](https://img.shields.io/badge/Base%20de%20Datos-MySQL-4479A1?logo=mysql&logoColor=white)
-![License](https://img.shields.io/badge/licencia-Educativo%20SENA-lightgrey)
-
-</div>
+Sistema web fullstack para la gestión integral de citas, barberos, clientes, fidelización por puntos y reportes analíticos para barberías modernas. Desarrollado con **FastAPI (Python 3.12)** en el backend, **React 18 + TypeScript + Vite + Redux** en el frontend y **MySQL** como motor relacional.
 
 ---
 
-## Tabla de Contenido
+## 📝 Antes de empezar
 
-- [Descripción](#descripción)
-- [Objetivo](#objetivo)
-- [Alcance del Sistema](#alcance-del-sistema)
-- [Arquitectura](#arquitectura)
-- [Stack Tecnológico](#stack-tecnológico)
-- [Funcionalidades por Rol](#funcionalidades-por-rol)
-- [Módulos del Sistema](#módulos-del-sistema)
-- [Modelo de Base de Datos](#modelo-de-base-de-datos)
-- [Historias de Usuario](#historias-de-usuario)
-- [Casos de Uso](#casos-de-uso)
-- [Paleta de Diseño](#paleta-de-diseño)
-- [Estructura del Proyecto](#estructura-del-proyecto)
-- [Instalación y Puesta en Marcha](#instalación-y-puesta-en-marcha)
-- [Documentación Adicional](#documentación-adicional)
-- [Metodología de Trabajo](#metodología-de-trabajo)
-- [Equipo de Desarrollo](#equipo-de-desarrollo)
-- [Limitaciones](#limitaciones)
+Este repositorio contiene la arquitectura completa, el backend API REST, el frontend SPA responsive y la base de datos relacional con vistas y procedimientos para el proyecto formativo **GLOBDE**. Antes de presentar este proyecto como evidencia formativa, completa la [**Bitácora obligatoria**](BITACORA.md) — el checklist secuencial que verifica con commits de tu repositorio la comprensión profunda de la arquitectura, autenticación, base de datos y flujos de negocio.
 
 ---
 
-## Descripción
+## 📋 Tabla de Contenidos
 
-**Globde** es una solución web integral para la gestión de citas en barberías, desarrollada por un equipo de aprendices ADSO del SENA. El sistema permite a los **clientes** reservar citas de forma autónoma, a los **barberos** organizar su agenda diaria y a los **administradores** controlar clientes, servicios, personal, reportes y fidelización — todo desde una interfaz moderna, segura y responsive.
+* [💈 GLOBDE — Sistema Integral de Citas y Barbería](#-globde--sistema-integral-de-gestión-de-citas-y-barbería)
+  * [📝 Antes de empezar](#-antes-de-empezar)
+  * [📋 Tabla de Contenidos](#-tabla-de-contenidos)
+  * [🛠️ Stack Tecnológico](#️-stack-tecnológico)
+  * [✅ Prerrequisitos](#-prerrequisitos)
+  * [🚀 Instalación y Puesta en Marcha](#-instalación-y-puesta-en-marcha)
+    * [Opción 1: Con Docker y Docker Compose (Recomendada)](#opción-1-con-docker-y-docker-compose-recomendada)
+    * [Opción 2: Instalación Manual (Sin Docker)](#opción-2-instalación-manual-sin-docker)
+  * [▶️ Ejecución y Verificación](#️-ejecución-y-verificación)
+  * [🧪 Testing y Calidad](#-testing-y-calidad)
+  * [📁 Estructura del Proyecto](#-estructura-del-proyecto)
+  * [📏 Convenciones y Estándares](#-convenciones-y-estándares)
+  * [📚 Documentación Técnica y Requisitos](#-documentación-técnica-y-requisitos)
+  * [👥 Roles y Capacidades del Sistema](#-roles-y-capacidades-del-sistema)
+  * [🎨 Sistema de Diseño (Design System)](#-sistema-de-diseño-design-system)
+  * [🎓 Propósito Educativo SENA](#-propósito-educativo-sena)
+  * [⚠️ Exención de Responsabilidades](#️-exención-de-responsabilidades)
+  * [📄 Licencia y Equipo](#-licencia-y-equipo)
 
-📄 Documento completo: [Propuesta Técnica (PDF)](docs/anexos/PROPUESTA_TECNICA.pdf)
+---
 
-## Objetivo
+## 🛠️ Stack Tecnológico
 
-Optimizar el proceso de agendamiento de citas en una barbería, mejorando la atención al cliente, reduciendo tiempos de espera y organizando eficientemente los horarios de servicios, clientes y barberos.
+| Capa | Tecnologías | Propósito |
+| :--- | :--- | :--- |
+| **Backend** | Python 3.12+, FastAPI, Uvicorn, Pydantic v2, bcrypt | API REST de alto rendimiento, validación de esquemas y hashing seguro |
+| **Frontend** | React 18+, TypeScript, Vite, Redux Toolkit, Axios | SPA reactiva, tipado estático estricto, gestión de estado y persistencia |
+| **Base de Datos** | MySQL 8.0+ / MariaDB 10.5+ | Persistencia relacional (12 tablas, 3 vistas SQL, integridad referencial) |
+| **Email (Dev/Prod)** | Python `smtplib` + MIME (Mailpit en local / SMTP TLS) | Envío de tokens seguros de recuperación de contraseña y alertas |
+| **Contenedores** | Docker 24+, Docker Compose v2 | Entorno aislado y reproducible para base de datos y backend |
+| **Estilos & UI** | CSS3 Moderno, Tokens semánticos, Flexbox/Grid | Diseño responsive mobile-first con temática barbería premium |
 
-## Alcance del Sistema
+---
 
-| ✅ Incluido en el sistema |
-|---|
-| Registro e inicio de sesión de usuarios |
-| Agendamiento, confirmación, cancelación y reprogramación de citas |
-| Visualización de horarios disponibles |
-| Gestión de clientes, barberos y servicios |
-| Panel administrativo con reportes |
-| Programa de fidelización por puntos |
-| Almacenamiento seguro de información en base de datos |
-| Diseño responsive (escritorio y móvil) |
+## ✅ Prerrequisitos
 
-## Arquitectura
+Antes de comenzar, asegúrate de contar con el siguiente software instalado:
 
-El sistema está construido bajo el patrón **Modelo–Vista–Controlador (MVC)**, separando la lógica de negocio, la interfaz de usuario y el control de solicitudes para facilitar el mantenimiento, la organización y la escalabilidad.
+| Herramienta | Versión mínima recomendada | Comando de verificación |
+| :--- | :--- | :--- |
+| **Python** | 3.12+ | `python3 --version` o `python --version` |
+| **Node.js** | 20 LTS+ | `node --version` |
+| **npm** o **pnpm** | npm 10+ / pnpm 9+ | `npm --version` o `pnpm --version` |
+| **Docker** | 24.0+ | `docker --version` |
+| **Docker Compose** | 2.20+ | `docker compose version` |
+| **MySQL Server** *(si no usas Docker)* | 8.0+ | `mysql --version` |
+| **Git** | 2.40+ | `git --version` |
 
-```
-┌────────────────────┐        REST API        ┌──────────────────────┐        ┌──────────────┐
-│      Frontend       │  ───────────────────▶  │       Backend        │ ─────▶ │  Base de datos │
-│  React + TypeScript │  ◀───────────────────  │  FastAPI (Python)    │ ◀───── │     MySQL      │
-│        Vite         │                        │                       │        │               │
-└────────────────────┘                         └──────────────────────┘        └──────────────┘
-```
+> 🖥️ **Usuarios de Windows**: Se recomienda utilizar **Git Bash** o **WSL2** para ejecutar comandos con sintaxis bash uniforme.
 
-## Stack Tecnológico
+---
 
-| Capa | Tecnologías |
-|---|---|
-| **Frontend** | React, TypeScript, Vite, Redux (authSlice, dataSlice), Axios |
-| **Backend** | FastAPI, Python, mysql-connector-python |
-| **Base de Datos** | MySQL (12 tablas: usuarios, roles, clientes, citas, servicios, facturas, etc.) |
-| **Contenedores** | Docker + Docker Compose (MySQL + Backend) |
-| **Control de versiones** | Git / GitHub |
-| **Entorno de desarrollo** | Visual Studio Code |
-| **Metodología** | Scrum |
+## 🚀 Instalación y Puesta en Marcha
 
-> 💡 En la propuesta técnica inicial se consideró Java + Spring Boot para el backend; la implementación final del equipo migró a **FastAPI (Python)** por agilidad de desarrollo.
+### Opción 1: Con Docker y Docker Compose (Recomendada)
 
-## Funcionalidades por Rol
-
-<table>
-<tr><th>Rol</th><th>Puede hacer</th></tr>
-<tr>
-<td><b>🧑‍💼 Administrador</b></td>
-<td>Gestionar usuarios, clientes, barberos y servicios · Configurar horarios y días no laborales · Buscar y filtrar citas · Enviar notificaciones masivas · Configurar y canjear puntos de fidelización · Generar y exportar reportes (ingresos, ranking de servicios, desempeño por barbero)</td>
-</tr>
-<tr>
-<td><b>💈 Barbero</b></td>
-<td>Visualizar su agenda diaria · Agendar citas manualmente · Cambiar el estado de una cita (pendiente / en atención / completada) · Configurar su disponibilidad</td>
-</tr>
-<tr>
-<td><b>🙋 Cliente</b></td>
-<td>Registrarse e iniciar sesión · Consultar perfiles y calificaciones de barberos · Reservar, cancelar y calificar citas · Consultar su historial · Unirse a una lista de espera · Acumular y consultar puntos de fidelización</td>
-</tr>
-</table>
-
-## Módulos del Sistema
-
-- 🔐 **Autenticación** — registro, login y recuperación de contraseña
-- 👤 **Gestión de Clientes** — registro, búsqueda, edición y eliminación
-- 💈 **Gestión de Barberos** — registro y configuración de disponibilidad
-- ✂️ **Gestión de Servicios** — catálogo con precio, duración y activación/desactivación
-- 📅 **Agendamiento de Citas** — reserva, reprogramación, cancelación y lista de espera
-- 🔔 **Notificaciones** — recordatorios automáticos, alertas de cancelación y avisos masivos
-- ⭐ **Fidelización** — acumulación y canje de puntos por servicio
-- 📊 **Reportes** — ingresos, ranking de servicios y desempeño por barbero, exportables a Excel/PDF
-
-## Modelo de Base de Datos
-
-La base de datos en **MySQL** (`database/database.sql`) está compuesta actualmente por **12 tablas**:
-
-`usuarios` · `roles` · `clientes` · `citas` · `servicios` · `catalogo_cortes` · `facturas` · `detalle_factura` · `penalidades` · `ranking_barberos` · `tokens_recuperacion` · `password_reset_tokens`
-
-> 📌 Vistas SQL y procedimientos almacenados adicionales están contemplados para próximas iteraciones del proyecto.
-
-## Historias de Usuario
-
-El proyecto cuenta con **33 Historias de Usuario (HU-01 a HU-33)**, cada una en su propio archivo, con formato *"Como... quiero... para..."* y criterios de aceptación detallados. Cubren desde autenticación y gestión de clientes hasta reportes administrativos y lista de espera.
-
-| Rango | Enfoque principal |
-|---|---|
-| HU-01 a HU-03 | Autenticación (registro, login, recuperación de contraseña) |
-| HU-04 a HU-09 | Gestión de clientes, servicios y barberos |
-| HU-10 a HU-17 | Disponibilidad, agendamiento y gestión de citas |
-| HU-18 a HU-22 | Calificaciones, historial y notificaciones |
-| HU-23 a HU-26 | Programa de fidelización por puntos |
-| HU-27 a HU-28 | Configuración de horarios del negocio |
-| HU-29 a HU-32 | Reportes administrativos y exportación |
-| HU-33 | Lista de espera |
-
-📄 **[Ver todas las Historias de Usuario →](docs/requisitos.md)**
-
-## Casos de Uso
-
-El sistema documenta **33 Casos de Uso (CU-01 a CU-33)**, alineados uno a uno con las Historias de Usuario. Cada archivo incluye actores, precondiciones, postcondiciones, secuencia normal, excepciones, rendimiento, frecuencia de uso y su **diagrama de caso de uso** (relaciones `«include»`/`«extend»` renderizadas con Mermaid).
-
-📄 **[Ver todos los Casos de Uso →](docs/requisitos.md)**
-
-## Paleta de Diseño
-
-<div>
-<img src="https://img.shields.io/badge/-000000?style=for-the-badge" height="30"/> Negro
-<img src="https://img.shields.io/badge/-FFFFFF?style=for-the-badge&logo=data:image/png" height="30"/> Blanco
-<img src="https://img.shields.io/badge/-00BCD4?style=for-the-badge" height="30"/> Cian
-<img src="https://img.shields.io/badge/-D4AF37?style=for-the-badge" height="30"/> Dorado
-</div>
-
-Paleta derivada del logo de Globde, aplicada de forma consistente en landing page, dashboards y presentación oficial. Las interfaces orientadas al cliente evitan jerga técnica para mantener una experiencia amigable.
-
-## Estructura del Proyecto
-
-```
-GLOBDE/
-├── frontend/                    # React + TypeScript + Vite
-│   ├── public/
-│   ├── src/
-│   │   ├── api/                  # Cliente Axios y llamadas a la API
-│   │   ├── assets/
-│   │   ├── components/           # Componentes reutilizables
-│   │   ├── pages/                 # Vistas (Landing, Login, Dashboards, Citas...)
-│   │   ├── store/                  # Redux — authSlice, dataSlice (persistencia con localStorage)
-│   │   └── utils/
-│   ├── package.json
-│   └── vite.config.ts
-├── backend/                     # FastAPI + Python
-│   ├── app/
-│   │   └── main.py               # API (endpoints, conexión MySQL)
-│   ├── .env.example              # Plantilla de variables de entorno
-│   ├── Dockerfile
-│   └── requirements.txt
-├── database/
-│   └── database.sql              # Script de creación de la base de datos (12 tablas)
-├── docs/
-│   ├── requisitos.md              # Índice de Historias de Usuario y Casos de Uso
-│   ├── requisitos/
-│   │   ├── HUs/                    # 33 Historias de Usuario (1 archivo por HU)
-│   │   ├── CUs/                    # 33 Casos de Uso con diagramas (1 archivo por CU)
-│   │   └── restricciones.md
-│   ├── referencia-tecnica/
-│   │   ├── architecture.md         # Arquitectura y diagramas del sistema
-│   │   ├── database-schema.md      # Esquema completo de la base de datos
-│   │   └── api-endpoints.md        # Todos los endpoints documentados
-│   ├── setup/
-│   │   ├── con-docker.md           # Guía de instalación con Docker
-│   │   └── sin-docker.md           # Guía de instalación manual
-│   └── anexos/                     # Documentos originales (PDF/Excel de la propuesta)
-├── docker-compose.yml            # Levanta MySQL + Backend en contenedores
-├── .gitignore
-└── README.md
-```
-
-## Instalación y Puesta en Marcha
-
-### Opción A — Con Docker (recomendada)
+Levanta la base de datos MySQL inicializada y el backend FastAPI en contenedores coordinados:
 
 ```bash
 # 1. Clonar el repositorio
-git clone https://github.com/tu-usuario/globde.git
-cd GLOBDE
+git clone https://github.com/JFelipeCa/GLOBDE-.git
+cd GLOBDE-
 
 # 2. Configurar variables de entorno del backend
 cd backend
 cp .env.example .env
-# Edita .env con tus valores (usuario y contraseña de MySQL)
+# Ajustar credenciales si es necesario (valores por defecto ya configurados para Docker)
 cd ..
 
-# 3. Levantar MySQL + Backend con Docker
+# 3. Levantar contenedores en segundo plano
 docker compose up -d
 
-# 4. Frontend (se ejecuta aparte, en modo desarrollo)
+# 4. Iniciar el Frontend (en terminal separada)
 cd frontend
 npm install
 npm run dev
-# → http://localhost:5173
+# → Frontend disponible en: http://localhost:5173
 ```
 
-### Opción B — Sin Docker (manual)
+### Opción 2: Instalación Manual (Sin Docker)
 
 ```bash
-# Backend
+# 1. Base de datos MySQL local
+# Conéctate a tu servidor MySQL e importa el script con las 12 tablas y vistas:
+mysql -u root -p < database/database.sql
+
+# 2. Backend (FastAPI)
 cd backend
 python -m venv venv
-source venv/bin/activate      # En Windows: venv\Scripts\activate
-pip install -r requirements.txt
-cp .env.example .env          # Ajusta los valores según tu MySQL local
-uvicorn app.main:app --reload
-# → http://localhost:8000
+# Activar entorno virtual:
+source venv/bin/activate        # En Linux/macOS y Windows Git Bash
+# venv\Scripts\activate         # En Windows CMD/PowerShell
 
-# Frontend (en otra terminal)
-cd frontend
+pip install -r requirements.txt
+cp .env.example .env            # Configurar DB_HOST=127.0.0.1 y DB_PASSWORD
+
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+# → API disponible en: http://localhost:8000
+# → Documentación Swagger interactiva: http://localhost:8000/docs
+
+# 3. Frontend (React + Vite)
+cd ../frontend
 npm install
 npm run dev
-# → http://localhost:5173
-
-# Base de datos: importa database/database.sql en tu gestor de MySQL
+# → Aplicación disponible en: http://localhost:5173
 ```
 
-> 🪟 **Windows:** también puedes usar el script `Arrancar-Globde.bat` en la raíz del proyecto para iniciar todo automáticamente.
-
-> ⚠️ **Importante:** el archivo `.env` real **nunca** debe subirse al repositorio (ya está protegido en `.gitignore`). Usa siempre `.env.example` como plantilla.
-
-📚 Guías detalladas paso a paso: **[Con Docker](docs/setup/con-docker.md)** · **[Sin Docker](docs/setup/sin-docker.md)**
-
-## Documentación Adicional
-
-| Documento | Descripción |
-|---|---|
-| [`docs/requisitos.md`](docs/requisitos.md) | Índice de las 33 Historias de Usuario y sus Casos de Uso |
-| [`docs/requisitos/HUs/`](docs/requisitos/HUs) | Historias de Usuario, una por archivo |
-| [`docs/requisitos/CUs/`](docs/requisitos/CUs) | Casos de Uso con diagramas de flujo (Mermaid) |
-| [`docs/requisitos/restricciones.md`](docs/requisitos/restricciones.md) | Restricciones del proyecto |
-| [`docs/referencia-tecnica/architecture.md`](docs/referencia-tecnica/architecture.md) | Arquitectura general y diagramas del sistema |
-| [`docs/referencia-tecnica/database-schema.md`](docs/referencia-tecnica/database-schema.md) | Esquema completo de la base de datos (12 tablas) |
-| [`docs/referencia-tecnica/api-endpoints.md`](docs/referencia-tecnica/api-endpoints.md) | Todos los endpoints de la API documentados |
-| [`docs/setup/con-docker.md`](docs/setup/con-docker.md) | Guía de instalación con Docker |
-| [`docs/setup/sin-docker.md`](docs/setup/sin-docker.md) | Guía de instalación manual |
-| [`docs/anexos/`](docs/anexos) | Documentos originales de la propuesta (PDF/Excel) |
-
-## Metodología de Trabajo
-
-El proyecto se desarrolló bajo la metodología ágil **Scrum**, organizando el trabajo en **6 sprints** con un total de **33 historias de usuario** distribuidas según prioridad y dependencia funcional, documentadas en el Sprint Backlog del equipo.
-
-## Equipo de Desarrollo
-
-| Integrante | Rol principal |
-|---|---|
-| **Laura** | DB |
-| **Juan Felipe Cañón** | Backend |
-| **Dayanna Patiño** | Frontend |
-
-Proyecto desarrollado como parte del programa **ADSO (Análisis y Desarrollo de Software)** 
-
-## Limitaciones
-
-- Requiere conexión a internet para funcionar.
-- Solo usuarios registrados pueden agendar citas.
-- La primera versión **no incluye pagos en línea**.
-- Las notificaciones dependen del correo electrónico registrado.
-- La capacidad de almacenamiento depende del servidor utilizado.
+> 💡 **En Windows**: Puedes hacer doble clic en el script `Arrancar-Globde.bat` en la raíz para iniciar los servicios automáticamente.
 
 ---
 
-<div align="center">
+## ▶️ Ejecución y Verificación
 
-Hecho con el <3 por el equipo Globde — SENA ADSO 2026
+| Servicio | URL Local | Descripción |
+| :--- | :--- | :--- |
+| **Frontend Web** | `http://localhost:5173` | Landing page, Catálogo, Login, Dashboards Cliente/Barbero/Admin |
+| **Backend REST API** | `http://localhost:8000` | Punto de entrada FastAPI con endpoints versionados `/api/` |
+| **Documentación Swagger** | `http://localhost:8000/docs` | Interfaz interactiva OpenAPI para pruebas de endpoints |
+| **Documentación ReDoc** | `http://localhost:8000/redoc` | Especificación técnica OpenAPI en formato ReDoc |
+| **Base de Datos MySQL** | `localhost:3306` | Base de datos `globde` con 12 tablas relacionales |
 
-</div>
+---
+
+## 🧪 Testing y Calidad
+
+### Backend (Python)
+```bash
+cd backend
+source venv/bin/activate
+# Verificación de sintaxis e importaciones
+python -m py_compile app/main.py
+```
+
+### Frontend (React + TypeScript)
+```bash
+cd frontend
+# Verificación de tipos TypeScript estricto
+npx tsc --noEmit
+# Verificación de linting
+npm run lint
+```
+
+---
+
+## 📁 Estructura del Proyecto
+
+```
+GLOBDE-/
+├── .github/
+│   └── copilot-instructions.md       # Reglas de arquitectura, código, seguridad y commits
+├── .gitignore                        # Archivos y secretos ignorados por Git
+├── Arrancar-Globde.bat               # Script automatizado para inicio en Windows
+├── AUDITORIA.md                      # Auditoría de pertinencia, completitud y seguridad
+├── BITACORA.md                       # Bitácora obligatoria de evidencias formativas SENA
+├── docker-compose.yml                # Orquestación de MySQL + FastAPI Backend
+├── README.md                         # Documento maestro del proyecto (este archivo)
+├── database/
+│   └── database.sql                  # Script DDL/DML: 12 tablas, 3 vistas SQL, roles iniciales
+├── backend/                          # Backend — FastAPI + Python 3.12
+│   ├── app/
+│   │   └── main.py                   # Endpoints REST, esquemas Pydantic, conexión MySQL, SMTP
+│   ├── .env.example                  # Plantilla de variables de entorno seguras
+│   ├── Dockerfile                    # Imagen Docker de producción backend
+│   └── requirements.txt              # Dependencias de Python fijadas
+├── frontend/                         # Frontend — React 18 + Vite + TypeScript
+│   ├── src/
+│   │   ├── api/                      # Clientes HTTP Axios (`axiosClient.ts`, `globdeApi.ts`)
+│   │   ├── components/               # Componentes UI (Navbar, Header, Footer, Sidebar, Cards...)
+│   │   ├── pages/                    # Vistas (LandingPage, LoginPage, DashboardAdmin/Barbero/Cliente...)
+│   │   ├── store/                    # Redux Toolkit (authSlice, dataSlice, hooks, store)
+│   │   ├── types.ts                  # Contratos y tipos TypeScript globales
+│   │   └── utils/                    # Formateadores de fecha, moneda y estados
+│   ├── package.json                  # Dependencias de Node.js
+│   └── vite.config.ts                # Configuración del bundler Vite
+└── docs/                             # Documentación Técnica Completa
+    ├── requisitos.md                 # Índice Maestro y Matriz de Trazabilidad RF ↔ HU ↔ CU
+    ├── requisitos/
+    │   ├── RFs/                      # 16 Requisitos Funcionales Maestros estructurados
+    │   ├── HUs/                      # 33 Historias de Usuario con Criterios Dado/Cuando/Entonces
+    │   ├── CUs/                      # 33 Casos de Uso con diagramas de flujo Mermaid
+    │   └── restricciones.md          # Restricciones técnicas, de negocio, legales y operativas
+    ├── referencia-tecnica/
+    │   ├── architecture.md           # Arquitectura en 3 capas, flujo de datos y diagramas
+    │   ├── database-schema.md        # Esquema ER, diccionario de 12 tablas y 3 vistas SQL
+    │   ├── api-endpoints.md          # Catálogo exhaustivo de endpoints, payloads y respuestas
+    │   └── design-system.md          # Tokens de diseño, paleta, componentes y estados
+    ├── conceptos/
+    │   ├── patrones-arquitectonicos.md # 10 patrones arquitectónicos aplicados en Globde
+    │   ├── owasp-top-10.md           # Mitigación del OWASP Top 10 aplicada al sistema
+    │   └── accesibilidad-aria-wcag.md # Estándares WCAG 2.1 AA y ARIA en la UI
+    ├── setup/
+    │   ├── con-docker.md             # Guía detallada con Docker y Troubleshooting
+    │   └── sin-docker.md             # Guía detallada manual paso a paso
+    └── anexos/                       # Documentación inicial (Propuesta Técnica PDF/Excel)
+```
+
+---
+
+## 📏 Convenciones y Estándares
+
+| Aspecto | Convención adoptada |
+| :--- | :--- |
+| **Nomenclatura backend** | Endpoints REST en minúsculas en español/inglés estandarizado (`/api/citas`, `/api/login`), variables snake_case |
+| **Nomenclatura frontend** | Componentes en PascalCase (`DashboardAdminPage.tsx`), hooks en camelCase (`useAppDispatch`), tipos en PascalCase |
+| **Encabezados pedagógicos** | Todos los archivos de documentación inician con `<!-- ¿Qué? ¿Para qué? ¿Impacto? -->` |
+| **Commits** | Conventional Commits con formato semántico y justificación: `feat(citas): agregar validacion de traslape` |
+| **Seguridad de contraseñas**| Hashing obligatorio con **bcrypt** (salt rounds integrados). Nunca en texto plano |
+| **Variables de entorno** | Ningún secreto hardcodeado; uso estricto de `.env` ignorado por Git con plantilla `.env.example` |
+
+---
+
+## 📚 Documentación Técnica y Requisitos
+
+Accede a la documentación completa según la necesidad:
+
+| Documento | Ubicación | Descripción |
+| :--- | :--- | :--- |
+| **Bitácora de Aprendizaje** | [`BITACORA.md`](BITACORA.md) | Checklist secuencial obligatorio de evidencias de desarrollo |
+| **Auditoría del Proyecto** | [`AUDITORIA.md`](AUDITORIA.md) | Evaluación formal de Pertinencia, Relevancia, Completitud y Seguridad |
+| **Instrucciones del Proyecto** | [`.github/copilot-instructions.md`](.github/copilot-instructions.md) | Reglas técnicas, patrones y directrices de desarrollo |
+| **Matriz de Requisitos** | [`docs/requisitos.md`](docs/requisitos.md) | Matriz cruzada de trazabilidad RF ↔ HU ↔ CU ↔ Endpoints |
+| **Requisitos Funcionales (RFs)**| [`docs/requisitos/RFs/`](docs/requisitos/RFs/) | 16 Requisitos Funcionales con entradas, proceso, salidas y reglas |
+| **Historias de Usuario (HUs)** | [`docs/requisitos/HUs/`](docs/requisitos/HUs/) | 33 HUs con criterios de aceptación `Dado que / Cuando / Entonces` |
+| **Casos de Uso (CUs)** | [`docs/requisitos/CUs/`](docs/requisitos/CUs/) | 33 CUs con secuencias normales, excepciones y diagramas Mermaid |
+| **Restricciones del Sistema** | [`docs/requisitos/restricciones.md`](docs/requisitos/restricciones.md) | Restricciones normativas (Ley 1581 Habeas Data), técnicas y de negocio |
+| **Arquitectura de Software** | [`docs/referencia-tecnica/architecture.md`](docs/referencia-tecnica/architecture.md) | Arquitectura en 3 capas, flujo cliente-servidor y decisiones técnicas |
+| **Esquema de Base de Datos** | [`docs/referencia-tecnica/database-schema.md`](docs/referencia-tecnica/database-schema.md) | Diccionario de 12 tablas, 3 vistas SQL, claves foráneas e índices |
+| **Referencia de API REST** | [`docs/referencia-tecnica/api-endpoints.md`](docs/referencia-tecnica/api-endpoints.md) | Especificación de endpoints con JSON requests, status HTTP y errores |
+| **Design System** | [`docs/referencia-tecnica/design-system.md`](docs/referencia-tecnica/design-system.md) | Paleta (`#000000`, `#00BCD4`, `#D4AF37`), tipografía y tokens UI |
+| **Patrones Arquitectónicos** | [`docs/conceptos/patrones-arquitectonicos.md`](docs/conceptos/patrones-arquitectonicos.md) | 10 patrones aplicados (MVC/Capas, DTO, Redux Store, Interceptor...) |
+| **Seguridad OWASP Top 10** | [`docs/conceptos/owasp-top-10.md`](docs/conceptos/owasp-top-10.md) | Análisis y mitigación de vulnerabilidades OWASP 2021 en Globde |
+| **Accesibilidad WCAG / ARIA** | [`docs/conceptos/accesibilidad-aria-wcag.md`](docs/conceptos/accesibilidad-aria-wcag.md) | Cumplimiento de estándares de accesibilidad e inclusión web |
+| **Guía de Setup Docker** | [`docs/setup/con-docker.md`](docs/setup/con-docker.md) | Despliegue en contenedores, variables y resolución de problemas |
+| **Guía de Setup Manual** | [`docs/setup/sin-docker.md`](docs/setup/sin-docker.md) | Configuración manual en entornos locales |
+
+---
+
+## 👥 Roles y Capacidades del Sistema
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                        ROLES DE USUARIO EN GLOBDE                      │
+├───────────────────┬──────────────────────────┬─────────────────────────┤
+│ 🧑‍💼 ADMINISTRADOR   │ 💈 BARBERO               │ 🙋 CLIENTE              │
+│ (Rol ID = 1)      │ (Rol ID = 2)             │ (Rol ID = 3)            │
+├───────────────────┼──────────────────────────┼─────────────────────────┤
+│ • Gestión total   │ • Visualización de su    │ • Registro y perfil     │
+│   de usuarios     │   agenda diaria          │   autónomo              │
+│ • Administración  │ • Agendamiento manual    │ • Catálogo de servicios │
+│   de servicios    │   en el salón            │   con precios y tiempos │
+│ • Control de      │ • Cambio de estado de    │ • Reserva de citas      │
+│   clientes        │   citas (en atención,    │   en tiempo real        │
+│ • Asignación de   │   completada)            │ • Cancelación de citas  │
+│   barberos        │ • Consulta de su         │   oportuna              │
+│ • Reportes de     │   ranking y desempeño    │ • Historial de visitas  │
+│   ingresos/citas  │ • Configuración de       │ • Calificación del      │
+│ • Configuración   │   disponibilidad         │   servicio prestado     │
+│   de fidelización │ • Visualización de       │ • Acumulación y saldo   │
+│ • Días festivos   │   comisiones estimadas   │   de puntos de lealtad  │
+└───────────────────┴──────────────────────────┴─────────────────────────┘
+```
+
+---
+
+## 🎨 Sistema de Diseño (Design System)
+
+La identidad visual de Globde combina elegancia clásica de barbería tradicional con modernidad digital:
+
+| Token Semántico | Valor Hexadecimal | Uso en la Aplicación |
+| :--- | :--- | :--- |
+| **Color Primario (Dark / Negro)** | `#000000` / `#111827` | Fondos de dashboards, sidebar, tipografía principal y contraste |
+| **Color de Acento (Cian Tecnológico)**| `#00BCD4` | Botones de acción, enlaces activos, badges de estado y focos de atención |
+| **Color Secundario (Dorado Premium)** | `#D4AF37` | Puntos de fidelización, calificaciones con estrellas, distinciones VIP |
+| **Superficie / Tarjetas** | `#1E293B` / `#FFFFFF` | Contenedores modulares, tablas de datos y paneles de métricas |
+| **Alertas y Estados** | `#10B981` (Completada), `#F59E0B` (Pendiente), `#EF4444` (Cancelada) | Badges de citas e indicadores visuales de feedback |
+
+---
+
+## 🎓 Propósito Educativo SENA
+
+Este proyecto fue desarrollado en el marco del programa **Tecnólogo en Análisis y Desarrollo de Software (ADSO)** del SENA. Su objetivo es evidenciar el dominio integral de las fases de ingeniería de software:
+
+1. **Análisis y Especificación**: Levantamiento de requisitos formales (RF, HU, CU, RNF, Restricciones).
+2. **Diseño de Software y Datos**: Modelado Entidad-Relación, normalización de base de datos y arquitectura en capas.
+3. **Construcción y Desarrollo**: Implementación backend con FastAPI y frontend con React + Redux + TypeScript.
+4. **Seguridad y Calidad**: Hashing de credenciales, mitigación de riesgos OWASP, accesibilidad WCAG y manejo de excepciones.
+
+---
+
+## ⚠️ Exención de Responsabilidades
+
+Este software fue desarrollado con fines **formativos y educativos**:
+
+* **Entorno Académico**: No debe ser expuesto en entornos de producción con datos reales sin antes incorporar pasarelas de pago cifradas, certificados SSL/TLS y auditorías de seguridad avanzadas.
+* **Credenciales de Ejemplo**: Los valores presentes en `.env.example` son únicamente ilustrativos.
+* **Protección de Datos Personales**: El sistema implementa principios de la **Ley 1581 de 2012 de Habeas Data** (Colombia) para el tratamiento de datos de contacto de clientes.
+
+---
+
+## 📄 Licencia y Equipo
+
+### Licencia
+Este proyecto está licenciado bajo [Creative Commons Atribución-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es). Eres libre de compartir y adaptar el material para fines educativos no comerciales dando el debido crédito.
+
+### Equipo de Desarrollo — SENA ADSO 2026
+
+| Nombre del Aprendiz | Rol Principal en el Proyecto |
+| :--- | :--- |
+| **Laura** | Diseño y Administración de Base de Datos (DBA / Data Modeling) |
+| **Juan Felipe Cañón** | Desarrollo Backend (FastAPI, Integración MySQL, Autenticación y Endpoints) |
+| **Dayanna Patiño** | Desarrollo Frontend (React, TypeScript, Redux Toolkit, UI/UX & Responsive) |
+
+---
+*Globde — Excelencia en la gestión de servicios y barbería.*

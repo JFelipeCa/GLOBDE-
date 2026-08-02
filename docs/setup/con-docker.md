@@ -1,84 +1,87 @@
-# 🐳 Instalación con Docker
+# Guía de Instalación y Despliegue con Docker — GLOBDE
 
-[⬅ Volver al README principal](../../README.md)
+<!--
+  ¿Qué? Guía paso a paso para levantar el entorno de desarrollo y base de datos de GLOBDE utilizando Docker Compose.
+  ¿Para qué? Proveer un método de despliegue estandarizado, reproducible y sin conflictos de librerías locales.
+  ¿Impacto? Reduce el tiempo de configuración del entorno de horas a pocos minutos en cualquier sistema operativo.
+-->
 
-Esta es la forma **recomendada** de levantar Globde, ya que evita instalar MySQL manualmente en tu equipo.
+> **Requisitos**: Docker Desktop 24.0+ y Docker Compose v2.20+ instalados y en ejecución.
 
-## Prerrequisitos
+---
 
-| Herramienta | Verificar con |
-|---|---|
-| Docker | `docker --version` |
-| Docker Compose | `docker compose version` |
-| Node.js 18+ (solo para el frontend) | `node --version` |
-| Git | `git --version` |
-
-## Pasos
+## 🚀 Pasos de Instalación Rápida
 
 ### 1. Clonar el repositorio
-
 ```bash
-git clone https://github.com/tu-usuario/globde.git
-cd GLOBDE
+git clone https://github.com/JFelipeCa/GLOBDE-.git
+cd GLOBDE-
 ```
 
-### 2. Configurar variables de entorno del backend
-
+### 2. Configurar variables de entorno del Backend
 ```bash
 cd backend
 cp .env.example .env
 ```
+Edita `backend/.env` si deseas personalizar contraseñas o configurar un servidor SMTP real. Por defecto viene preconfigurado para operar con el contenedor de MySQL:
 
-Abre `backend/.env` y ajusta los valores si lo necesitas (usuario, contraseña y nombre de la base de datos). Por defecto funciona con los valores de ejemplo para desarrollo local.
-
-### 3. Levantar MySQL + Backend
-
-```bash
-cd ..
-docker compose up -d
+```env
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=rootpassword
+DB_NAME=globde
+FRONTEND_URL=http://localhost:5173
+RESET_TOKEN_MINUTES=30
 ```
 
-Esto crea dos contenedores:
-
-| Contenedor | Servicio | Puerto |
-|---|---|---|
-| `globde_mysql` | Base de datos MySQL 8.0 | `3307` (mapeado desde `3306`) |
-| `globde_backend` | API FastAPI | `8000` |
-
-Verifica que ambos estén corriendo:
-
+### 3. Levantar los Contenedores
+Regresa a la raíz del proyecto y ejecuta:
+```bash
+docker compose up -d
+```
+Verifica que los contenedores estén saludables:
 ```bash
 docker compose ps
 ```
+Deberías ver los servicios `db` (MySQL 8.0) y `backend` (FastAPI) con estado `Up` o `Healthy`.
 
-La base de datos se inicializa automáticamente con el script `database/database.sql` la primera vez que se crea el contenedor.
-
-### 4. Levantar el Frontend
-
-El frontend **no** está dockerizado en este proyecto — se ejecuta directamente con Node:
-
+### 4. Iniciar el Frontend (React + Vite)
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-
-- Frontend: `http://localhost:5173`
-- Backend (API): `http://localhost:8000`
-- Documentación interactiva de la API (Swagger): `http://localhost:8000/docs`
-
-## Apagar los contenedores
-
-```bash
-docker compose down
-```
-
-Para borrar también los datos de la base de datos (reinicio completo):
-
-```bash
-docker compose down -v
-```
+La aplicación web estará disponible en: **`http://localhost:5173`**
 
 ---
 
-[⬅ Volver al README principal](../../README.md)
+## 🔍 Puertos y URLs de Servicios
+
+| Servicio | Puerto Host | URL |
+| :--- | :---: | :--- |
+| **Frontend React** | `5173` | `http://localhost:5173` |
+| **Backend FastAPI** | `8000` | `http://localhost:8000` |
+| **Swagger UI (Docs)**| `8000` | `http://localhost:8000/docs` |
+| **Base de Datos MySQL**| `3306` | `localhost:3306` (`user: root`) |
+
+---
+
+## 🛠️ Comandos de Mantenimiento y Troubleshooting
+
+### Ver logs en tiempo real
+```bash
+docker compose logs -f backend
+docker compose logs -f db
+```
+
+### Reiniciar contenedores
+```bash
+docker compose restart
+```
+
+### Detener y limpiar volúmenes (Reset completo)
+```bash
+docker compose down -v
+docker compose up -d --build
+```

@@ -1,72 +1,89 @@
-# 💻 Instalación sin Docker (manual)
+# Guía de Instalación Manual (Sin Docker) — GLOBDE
 
-[⬅ Volver al README principal](../../README.md)
+<!--
+  ¿Qué? Guía detallada para la instalación y ejecución manual de GLOBDE en sistemas operativos locales.
+  ¿Para qué? Proveer una alternativa a equipos sin soporte o recursos para Docker.
+  ¿Impacto? Garantiza la accesibilidad y ejecución del software en cualquier máquina de desarrollo.
+-->
 
-Usa esta guía si no tienes Docker instalado y prefieres correr todo directamente en tu máquina.
+> **Requisitos Previos**:
+> - Python 3.12+ instalado (`python --version`)
+> - Node.js 20 LTS+ y npm 10+ (`node --version`, `npm --version`)
+> - Servidor MySQL 8.0+ instalado y corriendo localmente (`mysql --version`)
 
-## Prerrequisitos
+---
 
-| Herramienta | Verificar con |
-|---|---|
-| Python 3.11+ | `python3 --version` |
-| Node.js 18+ | `node --version` |
-| MySQL Server (local, instalado en tu equipo) | `mysql --version` |
-| Git | `git --version` |
+## 📋 Pasos de Instalación Manual
 
-## 1. Clonar el repositorio
-
+### 1. Clonar el Repositorio
 ```bash
-git clone https://github.com/tu-usuario/globde.git
-cd GLOBDE
+git clone https://github.com/JFelipeCa/GLOBDE-.git
+cd GLOBDE-
 ```
 
-## 2. Configurar la base de datos
+---
 
-1. Abre MySQL Workbench (o tu cliente de MySQL preferido).
-2. Crea una nueva conexión a tu servidor local.
-3. Ejecuta el script [`database/database.sql`](../../database/database.sql) — esto crea la base de datos `globde` con sus 12 tablas.
+### 2. Configurar y Poblar la Base de Datos MySQL
 
-## 3. Configurar y ejecutar el Backend
+1. Abre tu cliente de base de datos preferido (MySQL Workbench, DBeaver, HeidiSQL o terminal).
+2. Ejecuta el script completo ubicado en `database/database.sql`:
+```bash
+mysql -u root -p < database/database.sql
+```
+3. Verifica que se haya creado la base de datos `globde` con las 12 tablas y 3 vistas SQL.
+
+---
+
+### 3. Configurar y Ejecutar el Backend (FastAPI)
 
 ```bash
 cd backend
 
-# Crear entorno virtual
+# Crear entorno virtual de Python
 python -m venv venv
 
-# Activar entorno virtual
-source venv/bin/activate        # Linux / macOS
-venv\Scripts\activate           # Windows (CMD/PowerShell)
+# Activar el entorno virtual:
+# En Linux / macOS / Git Bash:
+source venv/bin/activate
+# En Windows (CMD / PowerShell):
+# venv\Scripts\activate
 
 # Instalar dependencias
 pip install -r requirements.txt
 
 # Configurar variables de entorno
 cp .env.example .env
-# Edita .env con los datos de tu MySQL local (usuario, contraseña, puerto)
+# Edita el archivo .env con tus credenciales locales de MySQL:
+# DB_HOST=127.0.0.1
+# DB_PORT=3306
+# DB_USER=root
+# DB_PASSWORD=tu_password_local
+# DB_NAME=globde
 
-# Ejecutar el servidor
-uvicorn app.main:app --reload
+# Iniciar servidor FastAPI con recarga automática
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
-
-El backend queda disponible en `http://localhost:8000` (Swagger en `http://localhost:8000/docs`).
-
-## 4. Configurar y ejecutar el Frontend
-
-En otra terminal:
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-El frontend queda disponible en `http://localhost:5173`.
-
-## 🪟 Nota para usuarios de Windows
-
-También puedes usar el script `Arrancar-Globde.bat` (en la raíz del proyecto) para iniciar backend y frontend automáticamente, siempre que ya hayas configurado el entorno virtual y las dependencias al menos una vez.
+- API activa en: `http://localhost:8000`
+- Swagger Docs: `http://localhost:8000/docs`
 
 ---
 
-[⬅ Volver al README principal](../../README.md)
+### 4. Configurar y Ejecutar el Frontend (React + TypeScript)
+
+En una **segunda terminal**:
+```bash
+cd frontend
+
+# Instalar dependencias de Node
+npm install
+
+# Iniciar servidor de desarrollo Vite
+npm run dev
+```
+- Frontend activo en: `http://localhost:5173`
+
+---
+
+## 🪟 Inicio Rápido en Windows (`Arrancar-Globde.bat`)
+
+Si estás en Windows con MySQL ya corriendo como servicio, puedes hacer doble clic en el archivo `Arrancar-Globde.bat` situado en la raíz del proyecto para abrir ambas terminales de forma automática.
