@@ -166,8 +166,8 @@ GLOBDE-/
 │   └── copilot-instructions.md       # Reglas de arquitectura, código, seguridad y commits
 ├── .gitignore                        # Archivos y secretos ignorados por Git
 ├── Arrancar-Globde.bat               # Script automatizado para inicio en Windows
-├── AUDITORIA.md                      # Auditoría de pertinencia, completitud y seguridad
-├── BITACORA.md                       # Bitácora obligatoria de evidencias formativas SENA
+├── AUDITORIA.md                      # Revisión de calidad, hallazgos y deuda técnica
+├── BITACORA.md                       # Bitácora de seguimiento del proceso de desarrollo
 ├── docker-compose.yml                # Orquestación de MySQL + FastAPI Backend
 ├── README.md                         # Documento maestro del proyecto (este archivo)
 ├── database/
