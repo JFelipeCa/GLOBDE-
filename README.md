@@ -233,7 +233,6 @@ Accede a la documentación completa según la necesidad:
 | :--- | :--- | :--- |
 | **Bitácora de Seguimiento** | [`BITACORA.md`](BITACORA.md) | Registro fase por fase del proceso de construcción del sistema |
 | **Revisión de Calidad** | [`AUDITORIA.md`](AUDITORIA.md) | Estado real del proyecto, hallazgos, deuda técnica y prioridades |
-| **Convenciones de Desarrollo** | [`.github/copilot-instructions.md`](.github/copilot-instructions.md) | Reglas técnicas y directrices internas del equipo |
 | **Matriz de Requisitos** | [`docs/requisitos.md`](docs/requisitos.md) | Matriz cruzada de trazabilidad RF ↔ HU ↔ CU ↔ Endpoints |
 | **Requisitos Funcionales (RFs)**| [`docs/requisitos/RFs/`](docs/requisitos/RFs/) | 16 Requisitos Funcionales con entradas, proceso, salidas y reglas |
 | **Historias de Usuario (HUs)** | [`docs/requisitos/HUs/`](docs/requisitos/HUs/) | 33 HUs con criterios de aceptación `Dado que / Cuando / Entonces` |
@@ -248,6 +247,7 @@ Accede a la documentación completa según la necesidad:
 | **Accesibilidad WCAG / ARIA** | [`docs/conceptos/accesibilidad-aria-wcag.md`](docs/conceptos/accesibilidad-aria-wcag.md) | Cumplimiento de estándares de accesibilidad e inclusión web |
 | **Guía de Setup Docker** | [`docs/setup/con-docker.md`](docs/setup/con-docker.md) | Despliegue en contenedores, variables y resolución de problemas |
 | **Guía de Setup Manual** | [`docs/setup/sin-docker.md`](docs/setup/sin-docker.md) | Configuración manual en entornos locales |
+| **Convenciones de Desarrollo** | [`.github/copilot-instructions.md`](.github/copilot-instructions.md) | Reglas técnicas y directrices internas del equipo |
 
 ---
 
