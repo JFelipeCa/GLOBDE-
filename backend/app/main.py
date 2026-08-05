@@ -9,6 +9,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
+import bcrypt
 import mysql.connector
 
 load_dotenv()
@@ -24,10 +25,10 @@ app.add_middleware(
 )
 
 DB_CONFIG = {
-    "host":     os.getenv("myql"),
+    "host":     os.getenv("DB_HOST", "127.0.0.1"),
     "port":     int(os.getenv("DB_PORT", "3306")),
     "user":     os.getenv("DB_USER", "root"),
-    "password": os.getenv("DB_PASSWORD", "123456*"),
+    "password": os.getenv("DB_PASSWORD"),
     "database": os.getenv("DB_NAME", "globde"),
 }
 
@@ -122,7 +123,34 @@ def serializar(row: dict) -> dict:
 
 
 def ocultar_contrasena(usuario: dict) -> dict:
-    return {k: v for k, v in usuario.items() if k != "contraseña"}
+    return {k: v for k, v in usuario.items() if k != "contrasena"}
+
+
+def hash_password(password: str) -> str:
+    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+
+
+def es_hash_bcrypt(valor: str) -> bool:
+    return valor.startswith("$2b$") or valor.startswith("$2a$") or valor.startswith("$2y$")
+
+
+def verificar_password(id_usuario: int, password_ingresada: str, password_guardada: str) -> bool:
+    """Verifica la contrasena. Si en la BD todavia esta en texto plano
+    (usuarios creados antes de agregar hashing), compara en texto plano
+    y de paso la migra a bcrypt para que quede protegida desde ese momento."""
+    if es_hash_bcrypt(password_guardada):
+        return bcrypt.checkpw(
+            password_ingresada.encode("utf-8"), password_guardada.encode("utf-8")
+        )
+
+    if password_ingresada == password_guardada:
+        execute(
+            "UPDATE usuarios SET contrasena = %s WHERE id_usuario = %s",
+            (hash_password(password_ingresada), id_usuario),
+        )
+        return True
+
+    return False
 
 
 def ensure_password_reset_table():
@@ -274,10 +302,12 @@ def inicio():
 @app.post("/api/login")
 def login(payload: LoginRequest):
     usuario = fetchone(
-        "SELECT * FROM usuarios WHERE correo = %s AND contrasena = %s AND activo = 1",
-        (payload.correo, payload.contrasena),
+        "SELECT * FROM usuarios WHERE correo = %s AND activo = 1",
+        (payload.correo,),
     )
-    if not usuario:
+    if not usuario or not verificar_password(
+        usuario["id_usuario"], payload.contrasena, usuario["contrasena"]
+    ):
         raise HTTPException(status_code=401, detail="Correo o contraseña incorrectos")
     return ocultar_contrasena(usuario)
 
@@ -336,7 +366,7 @@ def restablecer_password(payload: PasswordResetRequest):
 
     execute_many(
         "UPDATE usuarios SET contrasena = %s WHERE id_usuario = %s",
-        (payload.nueva_contrasena, registro["id_usuario"]),
+        (hash_password(payload.nueva_contrasena), registro["id_usuario"]),
     )
     execute_many(
         "UPDATE password_reset_tokens SET used = 1 WHERE id_token = %s",
@@ -409,7 +439,7 @@ def crear_cliente(payload: ClienteCreate):
     id_usuario = execute(
         """INSERT INTO usuarios (nombre, correo, contrasena, telefono, id_rol)
            VALUES (%s, %s, %s, %s, %s)""",
-        (payload.nombre, payload.correo, payload.contrasena, payload.telefono, ROL_CLIENTE),
+        (payload.nombre, payload.correo, hash_password(payload.contrasena), payload.telefono, ROL_CLIENTE),
     )
 
     id_cliente = execute(
@@ -442,7 +472,7 @@ def actualizar_usuario(id_usuario: int, payload: PerfilUpdate):
             """UPDATE usuarios
                SET nombre = %s, correo = %s, telefono = %s, contrasena = %s
                WHERE id_usuario = %s""",
-            (payload.nombre, payload.correo, payload.telefono, payload.contrasena, id_usuario),
+            (payload.nombre, payload.correo, payload.telefono, hash_password(payload.contrasena), id_usuario),
         )
     else:
         execute(
@@ -565,7 +595,7 @@ def crear_usuario_interno(payload: UsuarioInternoCreate):
     id_usuario = execute(
         """INSERT INTO usuarios (nombre, correo, contrasena, telefono, id_rol)
            VALUES (%s, %s, %s, %s, %s)""",
-        (payload.nombre, payload.correo, payload.contrasena, payload.telefono, payload.id_rol),
+        (payload.nombre, payload.correo, hash_password(payload.contrasena), payload.telefono, payload.id_rol),
     )
 
     if payload.id_rol == ROL_BARBERO:
