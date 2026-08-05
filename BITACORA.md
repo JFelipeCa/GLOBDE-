@@ -1,31 +1,30 @@
-# 🧭 Bitácora Obligatoria del Aprendiz — GLOBDE
+# 🧭 Bitácora de Seguimiento del Proyecto — GLOBDE
 
 <!--
-  ¿Qué? Checklist secuencial obligatorio de verificación formativa para el proyecto GLOBDE.
-  ¿Para qué? Demostrar la comprensión real de la arquitectura fullstack (FastAPI, React+Redux, MySQL, Docker)
-             mediante trazabilidad de commits y sustentación técnica en vez de una copia superficial.
-  ¿Impacto? Permite al instructor del SENA auditar de manera objetiva el progreso y la autoría
-             del equipo en cada una de las capas del software desarrollado.
+  ¿Qué? Registro cronológico del proceso de construcción del sistema GLOBDE, fase por fase.
+  ¿Para qué? Documentar cómo el equipo abordó la arquitectura, la autenticación, la base de datos
+             y la lógica de negocio, dejando trazabilidad de las decisiones y de los avances.
+  ¿Impacto? Permite reconstruir el razonamiento técnico detrás de cada módulo y facilita
+             la sustentación, el mantenimiento y la incorporación de nuevos colaboradores.
 -->
 
-> **Regla de oro formativa**: Esta bitácora se diligencia de forma **secuencial**, fase por fase. No se avanza a la siguiente fase sin haber cerrado y validado la anterior. El instructor evalúa las evidencias directamente en el historial de Git de tu repositorio (`git log`, diffs de commits) y en la sustentación oral del equipo.
+> **Cómo se usa esta bitácora**: se diligencia de forma secuencial, fase por fase, a medida que el equipo avanza en el desarrollo. Cada fase cierra con una referencia al commit donde quedó la evidencia del avance en el repositorio.
 
 ---
 
-## 👤 Datos de Identificación
+## 👤 Datos del Proyecto
 
-| Campo | Información del Equipo |
+| Campo | Información |
 | :--- | :--- |
 | **Proyecto** | GLOBDE — Sistema de Gestión de Citas y Barbería |
 | **Programa** | Tecnólogo en Análisis y Desarrollo de Software (ADSO) — SENA |
-| **Ficha** | ADSO 2026 |
-| **Integrantes** | Laura (DB), Juan Felipe Cañón (Backend), Dayanna Patiño (Frontend) |
+| **Equipo** | Laura (Base de Datos), Juan Felipe Cañón (Backend), Dayanna Patiño (Frontend) |
 | **Repositorio** | `https://github.com/JFelipeCa/GLOBDE-` |
-| **Fecha de Inicio** | Febrero 2026 |
+| **Periodo** | Febrero 2026 |
 
 ---
 
-## 📌 Resumen de Fases de la Bitácora
+## 📌 Fases del Proceso de Desarrollo
 
 ```
 ┌────────────┐     ┌────────────┐     ┌────────────┐     ┌────────────┐
@@ -37,113 +36,131 @@
        ▼
 ┌────────────┐     ┌────────────┐     ┌────────────┐
 │   FASE 4   │ ──▶ │   FASE 5   │ ──▶ │   FASE 6   │
-│ Endpoints  │     │ Frontend y │     │Seguridad y │
-│ y Negocio  │     │ Redux Flow │     │ Auditoría  │
+│ Endpoints  │     │ Frontend y │     │ Calidad y  │
+│ y Negocio  │     │ Redux Flow │     │  Cierre    │
 └────────────┘     └────────────┘     └────────────┘
 ```
 
 ---
 
-## Fase 0 — Verificación del Entorno y Ejecución Local
+## Fase 0 — Puesta en marcha del entorno
 
-Levanta el proyecto siguiendo la guía de [`docs/setup/con-docker.md`](docs/setup/con-docker.md) o [`docs/setup/sin-docker.md`](docs/setup/sin-docker.md).
+Levantamiento del proyecto siguiendo [`docs/setup/con-docker.md`](docs/setup/con-docker.md) o [`docs/setup/sin-docker.md`](docs/setup/sin-docker.md).
 
-- [x] Contenedor de base de datos MySQL levantado y base de datos `globde` poblada con el script `database.sql`.
-- [x] Backend FastAPI corriendo en el puerto 8000 (`http://localhost:8000/docs`).
-- [x] Frontend React + Vite corriendo en el puerto 5173 (`http://localhost:5173`).
-- [x] Inicio de sesión exitoso con los 3 perfiles de prueba:
-  - Administrador: `admin@globde.com`
-  - Barbero: `carlos.barbero@globde.com`
-  - Cliente: `juan.cliente@globde.com`
-- [ ] **Commit de evidencia**: `docs: bitácora fase 0 entorno verificado` → Hash del commit: `________________________`
+- [x] Base de datos MySQL creada y poblada con `database/database.sql` (12 tablas y 3 vistas).
+- [x] Backend FastAPI ejecutándose en el puerto 8000 con Swagger disponible en `/docs`.
+- [x] Frontend React + Vite ejecutándose en el puerto 5173.
+- [x] Inicio de sesión verificado con los tres roles del sistema (Administrador, Barbero, Cliente).
 
----
-
-## Fase 1 — Comprensión de la Arquitectura del Sistema
-
-Estudia los documentos [`docs/referencia-tecnica/architecture.md`](docs/referencia-tecnica/architecture.md) y [`docs/conceptos/patrones-arquitectonicos.md`](docs/conceptos/patrones-arquitectonicos.md).
-
-- [ ] **Explicación técnica (10 a 15 líneas)**: Explica cómo viaja una petición desde que un cliente hace clic en "Reservar Cita" en React hasta que se guarda en la tabla `citas` de MySQL y retorna la respuesta:
-
+**Notas del equipo:**
 ```
-[Escribe aquí tu análisis técnico de la petición:
-1. En el frontend: el componente CitasPage despacha la acción a través de Axios al endpoint POST /api/citas...
-2. En el backend: FastAPI recibe el payload con el esquema Pydantic CitaCreate, valida los tipos de datos...
-3. En la base de datos: la función execute ejecuta el INSERT INTO citas con parámetros seguros previniendo SQLi...
-4. Respuesta: FastAPI retorna status 200 con el objeto de la cita serializado y Redux actualiza el estado...]
+(Observaciones de configuración: versiones usadas, ajustes en .env, incidencias resueltas)
 ```
 
-- [ ] **Commit de evidencia**: `docs: bitácora fase 1 comprension arquitectonica` → Hash del commit: `________________________`
+**Evidencia — commit:** `________________________`
 
 ---
 
-## Fase 2 — Trazabilidad del Flujo de Autenticación y Seguridad
+## Fase 1 — Definición de la arquitectura
 
-Analiza el endpoint `/api/login` y `/api/password/forgot` en `backend/app/main.py` y `frontend/src/store/authSlice.ts`.
+Documentos de referencia: [`architecture.md`](docs/referencia-tecnica/architecture.md) y [`patrones-arquitectonicos.md`](docs/conceptos/patrones-arquitectonicos.md).
 
-- [ ] Responder: ¿Por qué las contraseñas nunca se comparan con `==` en texto plano y qué función cumple `bcrypt.checkpw`?
+- [ ] Definición de la separación en 3 capas (SPA React · API REST FastAPI · MySQL).
+- [ ] Documentación del recorrido completo de una petición, tomando como caso de referencia la creación de una cita.
+
+**Recorrido de la petición (descripción del equipo):**
 ```
-[Tu respuesta aquí: bcrypt.checkpw toma la contraseña enviada, le aplica la misma función hash con el salt almacenado en la columna contrasena_hash de la tabla usuarios y realiza una comparación en tiempo constante, evitando vulnerabilidades de timing attacks y exposición de credenciales...]
+1. Frontend: el formulario de CitasPage envía los datos mediante Axios a POST /api/citas.
+2. Backend: FastAPI valida el payload con el esquema Pydantic antes de ejecutar cualquier lógica.
+3. Negocio: se verifica que el barbero no tenga otra cita en la misma fecha y hora.
+4. Datos: se ejecuta el INSERT con consulta parametrizada sobre la tabla citas.
+5. Respuesta: se retorna la cita creada y Redux actualiza el estado global de la interfaz.
 ```
-- [ ] Responder: ¿Qué ocurre si un usuario solicita recuperar su contraseña y qué función cumple la tabla `password_reset_tokens`?
+
+**Evidencia — commit:** `________________________`
+
+---
+
+## Fase 2 — Autenticación y seguridad
+
+Análisis de los endpoints `/api/login`, `/api/password/forgot` y `/api/password/reset`, junto con `authSlice.ts`.
+
+- [ ] Documentar por qué las contraseñas se validan con `bcrypt.checkpw` y no con comparación directa.
+
 ```
-[Tu respuesta aquí: Se genera un token criptográfico seguro con secrets.token_urlsafe(32), se almacena con timestamp de expiración (30 minutos) asociado al id_usuario y se envía por correo electrónico...]
+(Descripción del equipo: el hash se recalcula con la sal almacenada y la comparación se hace
+en tiempo constante, evitando exponer credenciales y mitigando ataques de temporización.)
 ```
-- [ ] **Commit de evidencia**: `docs: bitácora fase 2 analisis auth` → Hash del commit: `________________________`
+
+- [ ] Documentar el ciclo de vida del token de recuperación y el rol de `password_reset_tokens`.
+
+```
+(Descripción del equipo: token generado con secrets.token_urlsafe(32), vigencia de 30 minutos,
+marca de un solo uso y envío del enlace por correo mediante SMTP.)
+```
+
+**Evidencia — commit:** `________________________`
 
 ---
 
-## Fase 3 — Modelo de Datos, Vistas y Reglas de Integridad
+## Fase 3 — Modelo de datos y vistas SQL
 
-Revisa [`docs/referencia-tecnica/database-schema.md`](docs/referencia-tecnica/database-schema.md) y `database/database.sql`.
+Documento de referencia: [`database-schema.md`](docs/referencia-tecnica/database-schema.md).
 
-- [ ] Identifica las 3 Vistas SQL creadas en la base de datos de Globde y su propósito:
-  1. `vista_citas_detalle`: Consolida la información de la cita, uniendo las tablas `citas`, `clientes`, `usuarios` (barbero) y `servicios` para evitar múltiples `JOIN` en el backend.
-  2. `vista_clientes_resumen`: Resume el total de citas, puntos acumulados y última visita de cada cliente.
-  3. `vista_ingresos_barbero`: Calcula el consolidado financiero de servicios completados agrupados por profesional.
-- [ ] Verificar claves foráneas (FK) con `ON DELETE RESTRICT` o `ON DELETE CASCADE` en la tabla `citas`.
-- [ ] **Commit de evidencia**: `docs: bitácora fase 3 verificacion modelo de datos` → Hash del commit: `________________________`
+- [ ] Verificación de las 12 tablas y sus relaciones de clave foránea.
+- [ ] Documentación del propósito de las 3 vistas SQL:
+  1. `vista_citas_detalle` — consolida cita, cliente, barbero y servicio en una sola consulta.
+  2. `vista_clientes_resumen` — resume total de citas, puntos acumulados y última visita.
+  3. `vista_ingresos_barbero` — agrupa los servicios completados y su valor por profesional.
+- [ ] Revisión del comportamiento de integridad referencial en la tabla `citas`.
 
----
-
-## Fase 4 — Lógica de Negocio y Endpoints REST
-
-Revisa [`docs/referencia-tecnica/api-endpoints.md`](docs/referencia-tecnica/api-endpoints.md) y los 16 Requisitos Funcionales en [`docs/requisitos/RFs/`](docs/requisitos/RFs/).
-
-- [ ] Comprobar el endpoint de cambio de estado de cita: `PUT /api/citas/{id_cita}`.
-- [ ] Comprobar el algoritmo de acumulación de puntos de fidelización (10% del valor del servicio en puntos).
-- [ ] Comprobar el endpoint de filtrado de citas por barbero y fecha: `GET /api/citas?id_barbero=X&fecha=YYYY-MM-DD`.
-- [ ] **Commit de evidencia**: `docs: bitácora fase 4 logica de negocio y endpoints` → Hash del commit: `________________________`
+**Evidencia — commit:** `________________________`
 
 ---
 
-## Fase 5 — Frontend, Redux Toolkit y Experiencia de Usuario
+## Fase 4 — Endpoints y reglas de negocio
 
-Revisa `frontend/src/store/` y `frontend/src/pages/`.
+Documentos de referencia: [`api-endpoints.md`](docs/referencia-tecnica/api-endpoints.md) y [`docs/requisitos/RFs/`](docs/requisitos/RFs/).
 
-- [ ] Verificar el manejo de estado global con Redux (`authSlice` para usuario autenticado y rol; `dataSlice` para sincronización de datos).
-- [ ] Verificar la protección de rutas con `ProtectedRoute.tsx` restringiendo el acceso según el rol (`ROL_ADMINISTRADOR = 1`, `ROL_BARBERO = 2`, `ROL_CLIENTE = 3`).
-- [ ] Comprobar la responsividad en vistas móviles (menú desplegable, tablas adaptables y modal de agendamiento).
-- [ ] **Commit de evidencia**: `docs: bitácora fase 5 frontend y redux` → Hash del commit: `________________________`
+- [ ] Transición de estados de la cita mediante `PUT /api/citas/{id_cita}`.
+- [ ] Acreditación de puntos de fidelización al pasar una cita a estado `Completada`.
+- [ ] Filtrado de citas por barbero, cliente, fecha y estado.
+- [ ] Validación de no superposición de horarios al crear una cita.
 
----
-
-## Fase 6 — Auditoría de Calidad, Seguridad OWASP y Cierre
-
-Estudia [`AUDITORIA.md`](AUDITORIA.md) y [`docs/conceptos/owasp-top-10.md`](docs/conceptos/owasp-top-10.md).
-
-- [ ] Ejecutar comprobación de sintaxis de tipos en frontend (`npx tsc --noEmit`).
-- [ ] Verificar que ninguna clave o contraseña real esté expuesta en el historial público de Git.
-- [ ] Sustentación final del proyecto ante el instructor del SENA.
-- [ ] **Commit de evidencia**: `docs: bitácora fase 6 cierre y auditoria final` → Hash del commit: `________________________`
+**Evidencia — commit:** `________________________`
 
 ---
 
-## ✍️ Firma y Aprobación del Equipo
+## Fase 5 — Frontend, estado global y experiencia de usuario
 
-| Rol | Aprendiz | Firma / Estado |
+Revisión de `frontend/src/store/` y `frontend/src/pages/`.
+
+- [ ] Manejo de sesión y rol del usuario en `authSlice`.
+- [ ] Sincronización de citas, servicios y clientes en `dataSlice`.
+- [ ] Restricción de vistas por rol mediante `ProtectedRoute.tsx`.
+- [ ] Comportamiento responsive verificado en resoluciones móviles y de escritorio.
+
+**Evidencia — commit:** `________________________`
+
+---
+
+## Fase 6 — Calidad, seguridad y cierre
+
+Documentos de referencia: [`AUDITORIA.md`](AUDITORIA.md) y [`owasp-top-10.md`](docs/conceptos/owasp-top-10.md).
+
+- [ ] Verificación de tipos en el frontend (`npx tsc --noEmit`) sin errores.
+- [ ] Confirmación de que no hay credenciales reales versionadas en el repositorio.
+- [ ] Revisión final de la documentación y consistencia entre RFs, HUs y CUs.
+- [ ] Preparación de la sustentación técnica del equipo.
+
+**Evidencia — commit:** `________________________`
+
+---
+
+## ✍️ Responsables por Área
+
+| Área | Integrante | Estado |
 | :--- | :--- | :--- |
-| **Líder de Base de Datos** | Laura | ____________________ |
-| **Líder de Backend** | Juan Felipe Cañón | ____________________ |
-| **Líder de Frontend** | Dayanna Patiño | ____________________ |
-| **Instructor Evaluador** | Docente SENA ADSO | ____________________ |
+| **Base de Datos** | Laura | ____________________ |
+| **Backend** | Juan Felipe Cañón | ____________________ |
+| **Frontend** | Dayanna Patiño | ____________________ |

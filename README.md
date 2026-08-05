@@ -8,7 +8,7 @@ Sistema web fullstack para la gestión integral de citas, barberos, clientes, fi
 
 ## 📝 Antes de empezar
 
-Este repositorio contiene la arquitectura completa, el backend API REST, el frontend SPA responsive y la base de datos relacional con vistas y procedimientos para el proyecto formativo **GLOBDE**. Antes de presentar este proyecto como evidencia formativa, completa la [**Bitácora obligatoria**](BITACORA.md) — el checklist secuencial que verifica con commits de tu repositorio la comprensión profunda de la arquitectura, autenticación, base de datos y flujos de negocio.
+Este repositorio contiene la arquitectura completa, el backend API REST, el frontend SPA responsive y la base de datos relacional con vistas SQL del proyecto **GLOBDE**. Si es tu primer acercamiento al código, te recomendamos leer primero la [**Bitácora de seguimiento**](BITACORA.md), donde el equipo documentó fase por fase cómo se construyó el sistema, y la [**Arquitectura**](docs/referencia-tecnica/architecture.md), que explica cómo se comunican las tres capas.
 
 ---
 
@@ -166,8 +166,8 @@ GLOBDE-/
 │   └── copilot-instructions.md       # Reglas de arquitectura, código, seguridad y commits
 ├── .gitignore                        # Archivos y secretos ignorados por Git
 ├── Arrancar-Globde.bat               # Script automatizado para inicio en Windows
-├── AUDITORIA.md                      # Auditoría de pertinencia, completitud y seguridad
-├── BITACORA.md                       # Bitácora obligatoria de evidencias formativas SENA
+├── AUDITORIA.md                      # Revisión de calidad, hallazgos y deuda técnica
+├── BITACORA.md                       # Bitácora de seguimiento del proceso de desarrollo
 ├── docker-compose.yml                # Orquestación de MySQL + FastAPI Backend
 ├── README.md                         # Documento maestro del proyecto (este archivo)
 ├── database/
@@ -231,9 +231,8 @@ Accede a la documentación completa según la necesidad:
 
 | Documento | Ubicación | Descripción |
 | :--- | :--- | :--- |
-| **Bitácora de Aprendizaje** | [`BITACORA.md`](BITACORA.md) | Checklist secuencial obligatorio de evidencias de desarrollo |
-| **Auditoría del Proyecto** | [`AUDITORIA.md`](AUDITORIA.md) | Evaluación formal de Pertinencia, Relevancia, Completitud y Seguridad |
-| **Instrucciones del Proyecto** | [`.github/copilot-instructions.md`](.github/copilot-instructions.md) | Reglas técnicas, patrones y directrices de desarrollo |
+| **Bitácora de Seguimiento** | [`BITACORA.md`](BITACORA.md) | Registro fase por fase del proceso de construcción del sistema |
+| **Revisión de Calidad** | [`AUDITORIA.md`](AUDITORIA.md) | Estado real del proyecto, hallazgos, deuda técnica y prioridades |
 | **Matriz de Requisitos** | [`docs/requisitos.md`](docs/requisitos.md) | Matriz cruzada de trazabilidad RF ↔ HU ↔ CU ↔ Endpoints |
 | **Requisitos Funcionales (RFs)**| [`docs/requisitos/RFs/`](docs/requisitos/RFs/) | 16 Requisitos Funcionales con entradas, proceso, salidas y reglas |
 | **Historias de Usuario (HUs)** | [`docs/requisitos/HUs/`](docs/requisitos/HUs/) | 33 HUs con criterios de aceptación `Dado que / Cuando / Entonces` |
@@ -248,6 +247,7 @@ Accede a la documentación completa según la necesidad:
 | **Accesibilidad WCAG / ARIA** | [`docs/conceptos/accesibilidad-aria-wcag.md`](docs/conceptos/accesibilidad-aria-wcag.md) | Cumplimiento de estándares de accesibilidad e inclusión web |
 | **Guía de Setup Docker** | [`docs/setup/con-docker.md`](docs/setup/con-docker.md) | Despliegue en contenedores, variables y resolución de problemas |
 | **Guía de Setup Manual** | [`docs/setup/sin-docker.md`](docs/setup/sin-docker.md) | Configuración manual en entornos locales |
+| **Convenciones de Desarrollo** | [`.github/copilot-instructions.md`](.github/copilot-instructions.md) | Reglas técnicas y directrices internas del equipo |
 
 ---
 
