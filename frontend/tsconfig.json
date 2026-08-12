@@ -1,7 +1,54 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "types": ["node"],
+    "typeRoots": ["./src", "./node_modules/@types"],
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Path mapping */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": [
+    "src/main.tsx",
+    "src/App.tsx",
+    "src/context/**/*.ts*",
+    "src/components/ui/**/*.ts*",
+    "src/components/sections/**/*.ts*",
+    "src/components/paneles/**/*.ts*",
+    "src/data/**/*.ts*",
+    "src/utils/**/*.ts*",
+    "src/types.ts",
+    "src/types/**/*.ts*",
+    "src/vite-env.d.ts",
+    "vite.config.ts"
+  ],
+  "exclude": [
+    "src/api/**",
+    "src/store/**",
+    "src/pages/**",
+    "src/components/Navbar.tsx",
+    "src/components/ProtectedRoute.tsx",
+    "src/components/Citas.tsx",
+    "src/components/Disponibilidad.tsx"
   ]
 }
