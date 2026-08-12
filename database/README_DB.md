@@ -174,10 +174,9 @@ Como administrador, quiero revisar eventos importantes del sistema para tener tr
 
 ```text
 database/
+├── .gitignore
 ├── database.sql
 ├── README_DB.md
-├── _backup/
-│   └── database_original_NuevaInterfaz.sql.bak
 └── docs/
     └── cambios_backend_requeridos.md
 ```
