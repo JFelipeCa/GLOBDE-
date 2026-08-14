@@ -102,8 +102,7 @@ def crear_refresh_token(id_usuario: int) -> str:
 
 
 class TokenInvalido(Exception):
-    
-
+    pass
 
 def decodificar_token(token: str, tipo_esperado: str = "access") -> dict[str, Any]:
     try:
