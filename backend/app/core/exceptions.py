@@ -1,5 +1,3 @@
-"""Excepciones de dominio y manejadores globales de error."""
-
 import logging
 
 from fastapi import FastAPI, Request, status
@@ -54,8 +52,7 @@ class DemasiadosIntentos(GlobdeError):
 
 
 def registrar_manejadores(app: FastAPI) -> None:
-    """Registra los manejadores de error de la aplicacion."""
-
+   
     @app.exception_handler(GlobdeError)
     async def _globde_error(_: Request, exc: GlobdeError):
         return JSONResponse(
