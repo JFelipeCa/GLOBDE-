@@ -1,11 +1,3 @@
--- ============================================================
--- GLOBDE - Base de Datos v2
--- Proyecto: Sistema Integral de Gestión de Citas y Barbería
--- Motor: MySQL 8.0
--- Archivo principal de inicialización Docker:
--- database/database.sql
--- ============================================================
-
 CREATE DATABASE IF NOT EXISTS globde
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
