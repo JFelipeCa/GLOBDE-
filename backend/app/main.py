@@ -1,9 +1,3 @@
-"""Punto de entrada de la API GLOBDE (v2).
-
-Arma la aplicacion FastAPI, registra middlewares, manejadores de error y todos
-los routers de dominio bajo el prefijo /api.
-"""
-
 import logging
 import time
 from contextlib import asynccontextmanager
@@ -39,12 +33,7 @@ logger = logging.getLogger("globde")
 
 
 def esperar_base_de_datos(intentos: int = 30, espera: float = 2.0) -> bool:
-    """Reintenta la conexion mientras MySQL termina de arrancar.
-
-    En Docker el contenedor de la base tarda en aceptar conexiones TCP,
-    sobre todo la primera vez (ejecuta database.sql). Sin estos reintentos
-    el backend se rinde en el primer intento y deja la API en 503.
-    """
+    
     for intento in range(1, intentos + 1):
         if ping():
             return True
@@ -62,7 +51,7 @@ def esperar_base_de_datos(intentos: int = 30, espera: float = 2.0) -> bool:
 
 @asynccontextmanager
 async def ciclo_de_vida(_: FastAPI):
-    """Verifica configuracion y conexion al arrancar; cierra el pool al salir."""
+    
     for aviso in settings.validar():
         logger.warning("Configuracion: %s", aviso)
 
@@ -114,12 +103,6 @@ registrar_manejadores(app)
 
 api = APIRouter(prefix="/api")
 
-# Compatibilidad con el frontend actual, que sigue llamando a la API v1
-# (/datos, /login, POST /clientes, POST /citas). Va primero porque FastAPI
-# resuelve las rutas en orden de registro y estos handlers necesitan atender
-# POST /api/clientes y POST /api/citas antes que sus equivalentes v2; cuando
-# la peticion trae token delegan en la logica v2 sin cambiarla.
-# Se desactiva con ENABLE_LEGACY_ROUTES=false.
 if settings.ENABLE_LEGACY_ROUTES:
     api.include_router(legacy.router)
     logger.info(
