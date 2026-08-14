@@ -1,5 +1,3 @@
-"""Esquemas de autenticacion, registro y recuperacion de contrasena."""
-
 from pydantic import AliasChoices, Field, field_validator
 
 from app.core.security import validar_fortaleza_password
@@ -14,7 +12,7 @@ def _validar_password(valor: str) -> str:
 
 
 class LoginRequest(ModeloBase):
-    # Acepta tanto "correo" como "email" (el frontend actual envia "email")
+    
     correo: Correo = Field(validation_alias=AliasChoices("correo", "email"))
     contrasena: str = Field(
         min_length=1,
@@ -43,7 +41,7 @@ class RegistroClienteRequest(ModeloBase):
 
 
 class UsuarioAutenticado(ModeloBase):
-    """Datos del usuario que consume el frontend tras iniciar sesion."""
+    
 
     id_usuario: int
     id_rol: int
