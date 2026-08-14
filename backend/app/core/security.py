@@ -1,10 +1,3 @@
-"""Seguridad: hashing de contrasenas, tokens JWT y tokens de recuperacion.
-
-Cumple RNF-001 (seguridad) y las restricciones de la DB v2:
-- Las contrasenas se guardan solo como hash bcrypt en usuarios.contrasena_hash.
-- Los tokens de recuperacion se guardan solo como hash SHA-256.
-"""
-
 import hashlib
 import hmac
 import re
@@ -42,9 +35,9 @@ def es_hash_bcrypt(valor: str | None) -> bool:
 
 
 def verificar_password(password: str, hash_guardado: str | None) -> bool:
-    """Compara la contrasena con el hash almacenado, sin filtrar tiempos."""
+   
     if not hash_guardado or not es_hash_bcrypt(hash_guardado):
-        # Nunca se comparan contrasenas en texto plano: se rechaza el acceso.
+        
         return False
     try:
         return bcrypt.checkpw(password.encode("utf-8"), hash_guardado.encode("utf-8"))
@@ -56,7 +49,7 @@ PASSWORD_MIN_LONGITUD = 8
 
 
 def validar_fortaleza_password(password: str) -> list[str]:
-    """Devuelve la lista de reglas incumplidas por la contrasena."""
+    
     errores: list[str] = []
     if len(password) < PASSWORD_MIN_LONGITUD:
         errores.append(f"Debe tener al menos {PASSWORD_MIN_LONGITUD} caracteres")
@@ -109,7 +102,7 @@ def crear_refresh_token(id_usuario: int) -> str:
 
 
 class TokenInvalido(Exception):
-    """El token JWT es invalido, expiro o no es del tipo esperado."""
+    
 
 
 def decodificar_token(token: str, tipo_esperado: str = "access") -> dict[str, Any]:
@@ -135,11 +128,7 @@ def decodificar_token(token: str, tipo_esperado: str = "access") -> dict[str, An
 # ----------------------------------------------------------------------
 
 def generar_token_recuperacion() -> tuple[str, str]:
-    """Devuelve (token_plano, token_hash).
-
-    El token plano solo viaja al correo del usuario; en la base de datos
-    unicamente se almacena el hash SHA-256 (CHAR(64) en la DB v2).
-    """
+    
     token_plano = secrets.token_urlsafe(48)
     return token_plano, hash_token(token_plano)
 
