@@ -1,6 +1,6 @@
 FROM python:3.13-slim
 
-# Evita .pyc y fuerza salida sin buffer para ver los logs en docker logs
+
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
@@ -12,7 +12,7 @@ RUN pip install --no-cache-dir --upgrade pip \
 
 COPY . .
 
-# Usuario sin privilegios (RNF de seguridad)
+
 RUN useradd --create-home --shell /bin/bash globde \
     && chown -R globde:globde /app
 USER globde
