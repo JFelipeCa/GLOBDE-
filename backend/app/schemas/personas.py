@@ -1,5 +1,3 @@
-"""Esquemas de usuarios, clientes y barberos."""
-
 from datetime import time
 
 from pydantic import Field, field_validator, model_validator
@@ -26,7 +24,7 @@ class UsuarioOut(ModeloBase):
 
 
 class UsuarioInternoCreate(ModeloBase):
-    """Alta de administradores y barberos (solo admin)."""
+    
 
     nombre: str = Field(min_length=3, max_length=120)
     correo: Correo
@@ -73,8 +71,7 @@ class ClienteOut(ModeloBase):
 
 
 class ClienteResumenOut(ClienteOut):
-    """Cliente enriquecido con estadisticas (vista v_resumen_clientes)."""
-
+    
     total_citas: int = 0
     citas_completadas: int = 0
     citas_canceladas: int = 0
@@ -84,8 +81,7 @@ class ClienteResumenOut(ClienteOut):
 
 
 class ClienteCreate(ModeloBase):
-    """Registro de cliente hecho por el personal (CU-04)."""
-
+    
     nombre: str = Field(min_length=3, max_length=120)
     correo: Correo
     telefono: str | None = Field(default=None, max_length=25)
@@ -127,8 +123,7 @@ class BarberoOut(ModeloBase):
 
 
 class BarberoPerfilOut(BarberoOut):
-    """Perfil publico del barbero (CU-11) con horarios y servicios."""
-
+    
     servicios: list[dict] = Field(default_factory=list)
     horarios: list[dict] = Field(default_factory=list)
     resenas_recientes: list[dict] = Field(default_factory=list)
@@ -166,8 +161,7 @@ class HorarioBarberoOut(ModeloBase):
 
 
 class HorariosBarberoBulk(ModeloBase):
-    """Reemplaza toda la agenda semanal del barbero (HU-010)."""
-
+    
     horarios: list[HorarioBarberoIn]
 
 
