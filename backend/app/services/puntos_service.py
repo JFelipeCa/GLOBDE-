@@ -1,10 +1,3 @@
-"""Fidelizacion: saldo de puntos, movimientos y niveles.
-
-Toda modificacion de puntos pasa por aplicar_movimiento(), que bloquea la
-fila del cliente (FOR UPDATE), actualiza el saldo, recalcula el nivel y deja
-la trazabilidad en puntos_movimientos.
-"""
-
 from typing import Any
 
 from app.core.config import settings
