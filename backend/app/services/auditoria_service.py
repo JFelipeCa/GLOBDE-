@@ -1,9 +1,3 @@
-"""Registro de trazabilidad: audit_logs, login_attempts y notificaciones internas.
-
-Ningun fallo de auditoria debe tumbar la operacion principal del usuario,
-por eso todos los registros se hacen de forma tolerante a errores.
-"""
-
 import json
 import logging
 from typing import Any
@@ -65,7 +59,7 @@ def registrar_auditoria(
     user_agent: str | None = None,
     detalles: dict[str, Any] | None = None,
 ) -> None:
-    """Inserta un evento en audit_logs (nunca lanza excepcion)."""
+    
     try:
         execute(
             """INSERT INTO audit_logs
@@ -93,7 +87,7 @@ def registrar_intento_login(
     ip: str | None = None,
     user_agent: str | None = None,
 ) -> None:
-    """Inserta un intento de login en login_attempts."""
+    
     try:
         execute(
             """INSERT INTO login_attempts
@@ -108,12 +102,12 @@ def registrar_intento_login(
                 (user_agent or None) and user_agent[:255],
             ),
         )
-    except MySQLError as exc:  # pragma: no cover
+    except MySQLError as exc: 
         logger.warning("No se pudo registrar intento de login: %s", exc)
 
 
 def contar_intentos_fallidos(correo: str, ventana_minutos: int) -> int:
-    """Cuenta los intentos fallidos recientes de un correo (anti fuerza bruta)."""
+    
     try:
         return int(
             fetch_value(
@@ -127,7 +121,7 @@ def contar_intentos_fallidos(correo: str, ventana_minutos: int) -> int:
             )
             or 0
         )
-    except MySQLError:  # pragma: no cover
+    except MySQLError:  
         return 0
 
 
