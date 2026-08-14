@@ -1,9 +1,3 @@
-"""Configuracion central del backend GLOBDE.
-
-Toda la configuracion se lee de variables de entorno (12-factor app).
-Nunca se queman credenciales, correos ni secretos en el codigo.
-"""
-
 import os
 from functools import lru_cache
 
@@ -34,19 +28,13 @@ def _float(nombre: str, por_defecto: float) -> float:
 
 
 class Settings:
-    """Configuracion de la aplicacion."""
-
-    # ------------------------------------------------------------------
-    # Aplicacion
-    # ------------------------------------------------------------------
+   
     APP_NAME: str = os.getenv("APP_NAME", "GLOBDE API")
     APP_VERSION: str = os.getenv("APP_VERSION", "2.0.0")
     APP_ENV: str = os.getenv("APP_ENV", "development")
     DEBUG: bool = _bool("DEBUG", True)
 
-    # ------------------------------------------------------------------
-    # Base de datos (esquema v2)
-    # ------------------------------------------------------------------
+    
     DB_HOST: str = os.getenv("DB_HOST", "127.0.0.1")
     DB_PORT: int = _int("DB_PORT", 3306)
     DB_USER: str = os.getenv("DB_USER", "root")
@@ -55,33 +43,24 @@ class Settings:
     DB_POOL_SIZE: int = _int("DB_POOL_SIZE", 10)
     DB_CONNECT_TIMEOUT: int = _int("DB_CONNECT_TIMEOUT", 10)
 
-    # ------------------------------------------------------------------
-    # Seguridad / JWT
-    # ------------------------------------------------------------------
+    
     JWT_SECRET: str = os.getenv("JWT_SECRET", "")
     JWT_ALGORITHM: str = os.getenv("JWT_ALGORITHM", "HS256")
     ACCESS_TOKEN_MINUTES: int = _int("ACCESS_TOKEN_MINUTES", 60)
     REFRESH_TOKEN_DAYS: int = _int("REFRESH_TOKEN_DAYS", 7)
     BCRYPT_ROUNDS: int = _int("BCRYPT_ROUNDS", 12)
 
-    # Bloqueo por intentos fallidos de login (OWASP A07)
     LOGIN_MAX_INTENTOS: int = _int("LOGIN_MAX_INTENTOS", 5)
     LOGIN_VENTANA_MINUTOS: int = _int("LOGIN_VENTANA_MINUTOS", 15)
 
-    # ------------------------------------------------------------------
-    # CORS / Frontend
-    # ------------------------------------------------------------------
+    
     FRONTEND_URL: str = os.getenv("FRONTEND_URL", "http://localhost:5173")
     CORS_ORIGINS: str = os.getenv("CORS_ORIGINS", "*")
 
-    # ------------------------------------------------------------------
-    # Recuperacion de contrasena
-    # ------------------------------------------------------------------
+    
     RESET_TOKEN_MINUTES: int = _int("RESET_TOKEN_MINUTES", 30)
 
-    # ------------------------------------------------------------------
-    # Correo (SMTP)
-    # ------------------------------------------------------------------
+    
     EMAIL_ENABLED: bool = _bool("EMAIL_ENABLED", False)
     SMTP_HOST: str = os.getenv("SMTP_HOST", "")
     SMTP_PORT: int = _int("SMTP_PORT", 587)
@@ -91,9 +70,6 @@ class Settings:
     SMTP_STARTTLS: bool = _bool("SMTP_STARTTLS", True)
     SMTP_TIMEOUT: int = _int("SMTP_TIMEOUT", 15)
 
-    # ------------------------------------------------------------------
-    # Reglas de negocio
-    # ------------------------------------------------------------------
     SLOT_STEP_MINUTOS: int = _int("SLOT_STEP_MINUTOS", 15)
     CANCELACION_HORAS_MINIMAS: int = _int("CANCELACION_HORAS_MINIMAS", 2)
     PUNTO_VALOR_COP: float = _float("PUNTO_VALOR_COP", 100.0)
@@ -101,17 +77,15 @@ class Settings:
     PENALIDAD_NO_ASISTENCIA: float = _float("PENALIDAD_NO_ASISTENCIA", 0.0)
     PENALIDAD_CANCELACION_TARDIA: float = _float("PENALIDAD_CANCELACION_TARDIA", 0.0)
 
-    # Niveles de fidelizacion segun puntos acumulados en el saldo
+  
     NIVEL_PLATA_DESDE: int = _int("NIVEL_PLATA_DESDE", 300)
     NIVEL_ORO_DESDE: int = _int("NIVEL_ORO_DESDE", 700)
     NIVEL_DIAMANTE_DESDE: int = _int("NIVEL_DIAMANTE_DESDE", 1500)
 
-    # Rutas legacy (/api/login, /api/datos...) para no romper el frontend actual
+    
     ENABLE_LEGACY_ROUTES: bool = _bool("ENABLE_LEGACY_ROUTES", True)
 
-    # ------------------------------------------------------------------
-    # Roles (coinciden con la semilla de database.sql)
-    # ------------------------------------------------------------------
+   
     ROL_ADMINISTRADOR: int = 1
     ROL_BARBERO: int = 2
     ROL_CLIENTE: int = 3
