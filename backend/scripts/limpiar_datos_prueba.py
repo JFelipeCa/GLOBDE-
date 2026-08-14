@@ -1,14 +1,3 @@
-"""Elimina los datos generados por las pruebas automatizadas y los smoke tests.
-
-Borra unicamente los usuarios cuyo correo coincide con los patrones de prueba
-(y todo lo que cuelga de ellos: citas, facturas, puntos, resenas, etc.).
-Los datos semilla del esquema no se tocan.
-
-Uso:
-    python scripts/limpiar_datos_prueba.py          # muestra que borraria
-    python scripts/limpiar_datos_prueba.py --si     # ejecuta el borrado
-"""
-
 import sys
 from pathlib import Path
 
@@ -94,13 +83,13 @@ def main() -> int:
         cursor.execute(f"DELETE FROM barberos WHERE id_usuario IN ({m})", ids_usuario)
         cursor.execute(f"DELETE FROM usuarios WHERE id_usuario IN ({m})", ids_usuario)
 
-        # Intentos de login huerfanos de esos correos
+       
         cursor.execute(
             "DELETE FROM login_attempts WHERE "
             + " OR ".join(["correo_intentado LIKE %s"] * len(PATRONES)),
             PATRONES,
         )
-        # Servicios creados por los smoke tests
+        
         ms = marcadores(SERVICIOS_PRUEBA)
         cursor.execute(f"DELETE FROM barbero_servicio WHERE id_servicio IN "
                        f"(SELECT id_servicio FROM servicios WHERE nombre IN ({ms}))",
