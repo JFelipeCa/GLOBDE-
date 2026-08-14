@@ -1,9 +1,3 @@
-"""Envio de correos por SMTP con registro en email_logs.
-
-Todo envio queda trazado: se inserta 'pendiente', y luego se marca
-'enviado' o 'fallido' con el error correspondiente.
-"""
-
 import logging
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -53,7 +47,7 @@ def _log_enviado(id_email: int | None) -> None:
             "UPDATE email_logs SET estado = 'enviado', enviado_en = NOW() WHERE id_email = %s",
             (id_email,),
         )
-    except MySQLError:  # pragma: no cover
+    except MySQLError:  
         pass
 
 
@@ -65,7 +59,7 @@ def _log_fallido(id_email: int | None, error: str) -> None:
             "UPDATE email_logs SET estado = 'fallido', error = %s WHERE id_email = %s",
             (error[:2000], id_email),
         )
-    except MySQLError:  # pragma: no cover
+    except MySQLError:  
         pass
 
 
@@ -127,7 +121,7 @@ def enviar_email(
         _log_enviado(id_email)
         logger.info("Correo '%s' enviado a %s", tipo, destinatario)
         return True
-    except Exception as exc:  # noqa: BLE001 - se registra cualquier fallo SMTP
+    except Exception as exc:  
         _log_fallido(id_email, str(exc))
         logger.error("Fallo el envio de correo a %s: %s", destinatario, exc)
         return False
