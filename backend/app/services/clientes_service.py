@@ -1,5 +1,3 @@
-"""Gestion de clientes (usuario + perfil de fidelizacion)."""
-
 from typing import Any
 
 from app.core.config import settings
@@ -77,9 +75,7 @@ def listar(
 ) -> list[dict]:
     where, params = _filtros(buscar, nivel, activo)
     base = SQL_RESUMEN if con_resumen else SQL_CLIENTE
-    # El id_cliente actua de desempate: sin el, dos clientes con el mismo
-    # nombre pueden salir en distinto orden entre paginas y una fila se repite
-    # o se pierde al usar LIMIT/OFFSET.
+    
     orden = (
         "ORDER BY nombre ASC, id_cliente ASC"
         if con_resumen
