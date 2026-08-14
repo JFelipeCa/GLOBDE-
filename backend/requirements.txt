@@ -1,6 +1,24 @@
-fastapi
-uvicorn[standard]
-python-dotenv
-mysql-connector-python
-pydantic
-bcrypt
+# API
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+
+# Configuracion
+python-dotenv==1.0.1
+
+# Base de datos MySQL / MariaDB
+mysql-connector-python==9.1.0
+
+# Validacion de datos
+pydantic==2.10.4
+email-validator==2.2.0
+
+# Seguridad
+bcrypt==4.2.1
+PyJWT==2.10.1
+
+# Utilidades HTTP (multipart en formularios)
+python-multipart==0.0.20
+
+# Pruebas
+pytest==8.3.4
+httpx==0.28.1

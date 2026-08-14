@@ -1,0 +1,15 @@
+# No copiar secretos ni basura de la maquina local dentro de la imagen.
+.env
+.env.*
+!.env.example
+
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+*.log
+.DS_Store

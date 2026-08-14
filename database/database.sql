@@ -901,6 +901,12 @@ INSERT INTO roles (id_rol, nombre, descripcion, activo) VALUES
 
 -- ------------------------------------------------------------
 -- USUARIOS
+--
+-- Todas las cuentas de demostracion usan la contrasena: Globde2025*
+-- El hash es bcrypt con 12 rondas, generado con:
+--     python -c "import bcrypt; print(bcrypt.hashpw(b'Globde2025*', bcrypt.gensalt(rounds=12)).decode())"
+--
+-- Son credenciales de PRUEBA. Cambialas antes de cualquier despliegue real.
 -- ------------------------------------------------------------
 
 INSERT INTO usuarios (
@@ -920,7 +926,7 @@ INSERT INTO usuarios (
     'Admin Globde',
     'admin@globde.test',
     '3000000001',
-    '$2b$12$abcdefghijklmnopqrstuuGJcnAHfH9yilHd1zjwgu6ohVYegq9iG',
+    '$2b$12$bGT/EBbM0WSG2cGWUNAdyekqEhjqv7yrj3dY5wF/1plwLwXvGaS4W',
     NULL,
     TRUE,
     NOW()
@@ -931,7 +937,7 @@ INSERT INTO usuarios (
     'Barbero Demo Uno',
     'barbero1@globde.test',
     '3000000002',
-    '$2b$12$abcdefghijklmnopqrstuuGJcnAHfH9yilHd1zjwgu6ohVYegq9iG',
+    '$2b$12$bGT/EBbM0WSG2cGWUNAdyekqEhjqv7yrj3dY5wF/1plwLwXvGaS4W',
     NULL,
     TRUE,
     NOW()
@@ -942,7 +948,7 @@ INSERT INTO usuarios (
     'Barbero Demo Dos',
     'barbero2@globde.test',
     '3000000003',
-    '$2b$12$abcdefghijklmnopqrstuuGJcnAHfH9yilHd1zjwgu6ohVYegq9iG',
+    '$2b$12$bGT/EBbM0WSG2cGWUNAdyekqEhjqv7yrj3dY5wF/1plwLwXvGaS4W',
     NULL,
     TRUE,
     NOW()
@@ -953,7 +959,7 @@ INSERT INTO usuarios (
     'Cliente Demo Uno',
     'cliente1@example.com',
     '3000000004',
-    '$2b$12$abcdefghijklmnopqrstuuGJcnAHfH9yilHd1zjwgu6ohVYegq9iG',
+    '$2b$12$bGT/EBbM0WSG2cGWUNAdyekqEhjqv7yrj3dY5wF/1plwLwXvGaS4W',
     NULL,
     TRUE,
     NOW()
@@ -964,7 +970,7 @@ INSERT INTO usuarios (
     'Cliente Demo Dos',
     'cliente2@example.com',
     '3000000005',
-    '$2b$12$abcdefghijklmnopqrstuuGJcnAHfH9yilHd1zjwgu6ohVYegq9iG',
+    '$2b$12$bGT/EBbM0WSG2cGWUNAdyekqEhjqv7yrj3dY5wF/1plwLwXvGaS4W',
     NULL,
     TRUE,
     NOW()
@@ -975,7 +981,7 @@ INSERT INTO usuarios (
     'Cliente Demo Tres',
     'cliente3@example.com',
     '3000000006',
-    '$2b$12$abcdefghijklmnopqrstuuGJcnAHfH9yilHd1zjwgu6ohVYegq9iG',
+    '$2b$12$bGT/EBbM0WSG2cGWUNAdyekqEhjqv7yrj3dY5wF/1plwLwXvGaS4W',
     NULL,
     TRUE,
     NOW()
