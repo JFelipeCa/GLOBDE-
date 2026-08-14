@@ -1,5 +1,3 @@
-"""Dependencias de FastAPI: usuario autenticado y control de acceso por rol."""
-
 from typing import Annotated, Callable
 
 from fastapi import Depends, Request
@@ -14,7 +12,7 @@ bearer_scheme = HTTPBearer(auto_error=False, description="Token JWT de acceso")
 
 
 class UsuarioActual:
-    """Usuario autenticado resuelto desde el token JWT."""
+    
 
     def __init__(self, fila: dict):
         self.id_usuario: int = int(fila["id_usuario"])
@@ -30,7 +28,7 @@ class UsuarioActual:
             int(fila["id_barbero"]) if fila.get("id_barbero") is not None else None
         )
 
-    # -- Ayudas de rol -------------------------------------------------
+    
     @property
     def es_admin(self) -> bool:
         return self.id_rol == settings.ROL_ADMINISTRADOR
@@ -75,7 +73,7 @@ SQL_USUARIO_CONTEXTO = """
 def obtener_usuario_actual(
     credenciales: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer_scheme)],
 ) -> UsuarioActual:
-    """Valida el JWT del header Authorization y devuelve el usuario."""
+    
     if credenciales is None or not credenciales.credentials:
         raise NoAutorizado("Debes iniciar sesion para acceder a este recurso")
 
@@ -100,7 +98,7 @@ def obtener_usuario_actual(
 def obtener_usuario_opcional(
     credenciales: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer_scheme)],
 ) -> UsuarioActual | None:
-    """Igual que obtener_usuario_actual pero no falla si no hay token."""
+    
     if credenciales is None or not credenciales.credentials:
         return None
     try:
@@ -110,7 +108,7 @@ def obtener_usuario_opcional(
 
 
 def requiere_roles(*roles: int) -> Callable[..., UsuarioActual]:
-    """Dependencia que exige que el usuario tenga uno de los roles indicados."""
+    "
 
     def _verificar(
         usuario: Annotated[UsuarioActual, Depends(obtener_usuario_actual)],
