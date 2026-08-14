@@ -1,15 +1,3 @@
-# ---------------------------------------------------------------------
-# GLOBDE - stack completo: MySQL + API (FastAPI) + Frontend (React/Vite)
-#
-# Antes del primer arranque:
-#     cp .env.example .env                 <- clave de MySQL (raiz)
-#     cp backend/.env.example backend/.env <- configuracion de la API
-#     docker compose up --build
-#
-# La clave y el nombre de la base se definen UNA sola vez, en el .env de
-# la raiz, y se inyectan tanto a MySQL como al backend. Asi es imposible
-# que queden desincronizados.
-# ---------------------------------------------------------------------
 services:
 
   mysql:
@@ -23,16 +11,10 @@ services:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      # Solo el script de esquema: se ejecuta una vez, al crear el volumen.
-      # Para recargarlo desde cero: docker compose down -v
+      
       - ./database/database.sql:/docker-entrypoint-initdb.d/01-database.sql:ro
     healthcheck:
-      # OJO: tiene que ser 127.0.0.1, NO localhost.
-      # Con "localhost" mysqladmin usa el socket de Unix, que ya responde
-      # mientras el contenedor ejecuta los scripts de init con un servidor
-      # temporal. El healthcheck daria "healthy" antes de tiempo, el backend
-      # arrancaria y encontraria el puerto 3306 cerrado (error 111).
-      # Con 127.0.0.1 se fuerza TCP, que es justo lo que usa el backend.
+      
       test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-P", "3306", "-uroot", "-p${DB_PASSWORD:-globde123}", "--silent"]
       interval: 5s
       timeout: 5s
@@ -44,14 +26,10 @@ services:
     container_name: globde_backend
     restart: unless-stopped
     env_file:
-      # Configuracion general de la API (JWT, reglas de negocio, SMTP...).
-      # Si este archivo no existe, "docker compose up" falla: copialo con
-      #     cp backend/.env.example backend/.env
+      
       - ./backend/.env
     environment:
-      # Estas cuatro MANDAN sobre lo que diga backend/.env, porque dentro
-      # de la red de Docker el host es el nombre del servicio y la clave
-      # tiene que ser la misma con la que arranco MySQL.
+     
       DB_HOST: mysql
       DB_PORT: 3306
       DB_PASSWORD: ${DB_PASSWORD:-globde123}
@@ -69,14 +47,13 @@ services:
     ports:
       - "5173:5173"
     environment:
-      # El navegador pide /api al propio Vite; Vite lo reenvia al backend.
+      
       VITE_PROXY_TARGET: http://backend:8000
     volumes:
-      # Recarga en caliente sin pisar los node_modules del contenedor.
+      
       - ./frontend/src:/app/src
       - ./frontend/index.html:/app/index.html
-      # Volumen anonimo: blinda los node_modules de la imagen (Linux)
-      # frente a los de tu maquina, que pueden ser de Windows o Mac.
+      
       - /app/node_modules
     depends_on:
       - backend
