@@ -108,7 +108,7 @@ def obtener_usuario_opcional(
 
 
 def requiere_roles(*roles: int) -> Callable[..., UsuarioActual]:
-    "
+    
 
     def _verificar(
         usuario: Annotated[UsuarioActual, Depends(obtener_usuario_actual)],
