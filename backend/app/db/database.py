@@ -1,9 +1,3 @@
-"""Capa de acceso a datos: pool de conexiones MySQL y helpers de consulta.
-
-Todas las consultas usan sentencias parametrizadas (%s) para evitar
-inyeccion SQL (OWASP A03).
-"""
-
 import logging
 from contextlib import contextmanager
 from typing import Any, Iterator, Sequence
@@ -41,14 +35,14 @@ def get_pool() -> pooling.MySQLConnectionPool:
 
 
 def cerrar_pool() -> None:
-    """Libera el pool (usado en el shutdown de la app y en tests)."""
+    
     global _pool
     _pool = None
 
 
 @contextmanager
 def get_connection() -> Iterator[Any]:
-    """Entrega una conexion del pool y siempre la devuelve."""
+   
     conexion = get_pool().get_connection()
     try:
         yield conexion
@@ -61,13 +55,8 @@ def get_connection() -> Iterator[Any]:
 
 @contextmanager
 def transaction() -> Iterator[Any]:
-    """Cursor transaccional: commit al salir bien, rollback ante cualquier error.
+    
 
-    Uso:
-        with transaction() as cur:
-            cur.execute(...)
-            cur.execute(...)
-    """
     with get_connection() as conexion:
         cursor = conexion.cursor(dictionary=True)
         try:
@@ -81,7 +70,7 @@ def transaction() -> Iterator[Any]:
 
 
 def fetch_all(sql: str, params: Sequence[Any] = ()) -> list[dict]:
-    """Ejecuta un SELECT y devuelve todas las filas serializadas a JSON."""
+    
     with get_connection() as conexion:
         cursor = conexion.cursor(dictionary=True)
         try:
@@ -93,7 +82,7 @@ def fetch_all(sql: str, params: Sequence[Any] = ()) -> list[dict]:
 
 
 def fetch_one(sql: str, params: Sequence[Any] = ()) -> dict | None:
-    """Ejecuta un SELECT y devuelve la primera fila (o None)."""
+    
     with get_connection() as conexion:
         cursor = conexion.cursor(dictionary=True)
         try:
@@ -106,7 +95,7 @@ def fetch_one(sql: str, params: Sequence[Any] = ()) -> dict | None:
 
 
 def fetch_value(sql: str, params: Sequence[Any] = (), por_defecto: Any = None) -> Any:
-    """Devuelve el primer valor de la primera fila (COUNT, SUM, etc.)."""
+    
     fila = fetch_one(sql, params)
     if not fila:
         return por_defecto
@@ -115,7 +104,7 @@ def fetch_value(sql: str, params: Sequence[Any] = (), por_defecto: Any = None) -
 
 
 def execute(sql: str, params: Sequence[Any] = ()) -> int:
-    """Ejecuta INSERT/UPDATE/DELETE y devuelve el lastrowid."""
+   
     with get_connection() as conexion:
         cursor = conexion.cursor()
         try:
@@ -130,7 +119,7 @@ def execute(sql: str, params: Sequence[Any] = ()) -> int:
 
 
 def execute_rowcount(sql: str, params: Sequence[Any] = ()) -> int:
-    """Ejecuta INSERT/UPDATE/DELETE y devuelve las filas afectadas."""
+    
     with get_connection() as conexion:
         cursor = conexion.cursor()
         try:
@@ -145,7 +134,7 @@ def execute_rowcount(sql: str, params: Sequence[Any] = ()) -> int:
 
 
 def ping() -> bool:
-    """Verifica que la base de datos responda (health check)."""
+    
     try:
         with get_connection() as conexion:
             cursor = conexion.cursor()
