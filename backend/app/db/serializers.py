@@ -1,9 +1,3 @@
-"""Serializacion de filas MySQL a tipos JSON-friendly.
-
-MySQL devuelve Decimal, date, datetime y timedelta; el frontend espera
-numeros y strings. Aqui se normaliza todo en un solo lugar.
-"""
-
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from typing import Any
@@ -41,11 +35,11 @@ def serializar_fila(fila: dict | None) -> dict | None:
 
 
 def serializar_filas(filas: list[dict]) -> list[dict]:
-    return [serializar_fila(f) for f in filas if f is not None]  # type: ignore[misc]
+    return [serializar_fila(f) for f in filas if f is not None]  
 
 
 def hhmm(valor: Any) -> str | None:
-    """Normaliza una hora a formato HH:MM (lo que consume el frontend)."""
+   
     serializado = _serializar_valor(valor)
     if not isinstance(serializado, str):
         return serializado
