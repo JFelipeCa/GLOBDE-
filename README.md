@@ -2,13 +2,13 @@
 
 # 💈 GLOBDE — Sistema Integral de Gestión de Citas y Barbería
 
-Sistema web fullstack para la gestión integral de citas, barberos, clientes, fidelización por puntos y reportes analíticos para barberías modernas. Desarrollado con **FastAPI (Python 3.12)** en el backend, **React 18 + TypeScript + Vite + Redux** en el frontend y **MySQL** como motor relacional.
+Sistema web fullstack para la gestión integral de citas, barberos, clientes, fidelización por puntos y reportes analíticos para barberías modernas. Desarrollado con **FastAPI (Python 3.13)** en el backend, **React 19 + TypeScript + Vite (Context API)** en el frontend y **MySQL** como motor relacional.
 
 ---
 
 ## 📝 Antes de empezar
 
-Este repositorio contiene la arquitectura completa, el backend API REST, el frontend SPA responsive y la base de datos relacional con vistas SQL del proyecto **GLOBDE**. Si es tu primer acercamiento al código, te recomendamos leer primero la [**Bitácora de seguimiento**](BITACORA.md), donde el equipo documentó fase por fase cómo se construyó el sistema, y la [**Arquitectura**](docs/referencia-tecnica/architecture.md), que explica cómo se comunican las tres capas.
+Este repositorio contiene la arquitectura completa, el backend API REST, el frontend SPA responsive y la base de datos relacional con vistas SQL del proyecto **GLOBDE**. Si es tu primer acercamiento al código, te recomendamos leer primero la [**Arquitectura**](docs/referencia-tecnica/architecture.md), que explica cómo se comunican las tres capas, y las [**historias de usuario y casos de uso**](docs/requisitos.md), que documentan qué se construyó y por qué.
 
 ---
 
@@ -39,9 +39,9 @@ Este repositorio contiene la arquitectura completa, el backend API REST, el fron
 
 | Capa | Tecnologías | Propósito |
 | :--- | :--- | :--- |
-| **Backend** | Python 3.12+, FastAPI, Uvicorn, Pydantic v2, bcrypt | API REST de alto rendimiento, validación de esquemas y hashing seguro |
+| **Backend** | Python 3.13+, FastAPI, Uvicorn, Pydantic v2, bcrypt | API REST de alto rendimiento, validación de esquemas y hashing seguro |
 | **Frontend** | React 18+, TypeScript, Vite, Redux Toolkit, Axios | SPA reactiva, tipado estático estricto, gestión de estado y persistencia |
-| **Base de Datos** | MySQL 8.0+ / MariaDB 10.5+ | Persistencia relacional (12 tablas, 3 vistas SQL, integridad referencial) |
+| **Base de Datos** | MySQL 8.0+ / MariaDB 10.5+ | Persistencia relacional (20 tablas, 4 vistas SQL, integridad referencial) |
 | **Email (Dev/Prod)** | Python `smtplib` + MIME (Mailpit en local / SMTP TLS) | Envío de tokens seguros de recuperación de contraseña y alertas |
 | **Contenedores** | Docker 24+, Docker Compose v2 | Entorno aislado y reproducible para base de datos y backend |
 | **Estilos & UI** | CSS3 Moderno, Tokens semánticos, Flexbox/Grid | Diseño responsive mobile-first con temática barbería premium |
@@ -97,7 +97,7 @@ pnpm run dev
 
 ```bash
 # 1. Base de datos MySQL local
-# Conéctate a tu servidor MySQL e importa el script con las 12 tablas y vistas:
+# Conéctate a tu servidor MySQL e importa el script con las 20 tablas y vistas:
 mysql -u root -p < database/database.sql
 
 # 2. Backend (FastAPI)
@@ -128,7 +128,7 @@ pnpm run dev
 | **Backend REST API** | `http://localhost:8000` | Punto de entrada FastAPI con endpoints versionados `/api/` |
 | **Documentación Swagger** | `http://localhost:8000/docs` | Interfaz interactiva OpenAPI para pruebas de endpoints |
 | **Documentación ReDoc** | `http://localhost:8000/redoc` | Especificación técnica OpenAPI en formato ReDoc |
-| **Base de Datos MySQL** | `localhost:3306` | Base de datos `globde` con 12 tablas relacionales |
+| **Base de Datos MySQL** | `localhost:3306` | Base de datos `globde` con 20 tablas relacionales |
 
 ---
 
@@ -160,14 +160,11 @@ GLOBDE-/
 ├── .github/
 │   └── copilot-instructions.md       # Reglas de arquitectura, código, seguridad y commits
 ├── .gitignore                        # Archivos y secretos ignorados por Git
-├── Arrancar-Globde.bat               # Script automatizado para inicio en Windows
-├── AUDITORIA.md                      # Revisión de calidad, hallazgos y deuda técnica
-├── BITACORA.md                       # Bitácora de seguimiento del proceso de desarrollo
 ├── docker-compose.yml                # Orquestación de MySQL + FastAPI Backend
 ├── README.md                         # Documento maestro del proyecto (este archivo)
 ├── database/
-│   └── database.sql                  # Script DDL/DML: 12 tablas, 3 vistas SQL, roles iniciales
-├── backend/                          # Backend — FastAPI + Python 3.12
+│   └── database.sql                  # Script DDL/DML: 20 tablas, 4 vistas SQL, roles iniciales
+├── backend/                          # Backend — FastAPI + Python 3.13
 │   ├── app/
 │   │   └── main.py                   # Endpoints REST, esquemas Pydantic, conexión MySQL, SMTP
 │   ├── .env.example                  # Plantilla de variables de entorno seguras
@@ -193,7 +190,7 @@ GLOBDE-/
     │   └── restricciones.md          # Restricciones técnicas, de negocio, legales y operativas
     ├── referencia-tecnica/
     │   ├── architecture.md           # Arquitectura en 3 capas, flujo de datos y diagramas
-    │   ├── database-schema.md        # Esquema ER, diccionario de 12 tablas y 3 vistas SQL
+    │   ├── database-schema.md        # Esquema ER, diccionario de 20 tablas y 4 vistas SQL
     │   ├── api-endpoints.md          # Catálogo exhaustivo de endpoints, payloads y respuestas
     │   └── design-system.md          # Tokens de diseño, paleta, componentes y estados
     ├── conceptos/
@@ -227,15 +224,13 @@ Accede a la documentación completa según la necesidad:
 
 | Documento | Ubicación | Descripción |
 | :--- | :--- | :--- |
-| **Bitácora de Seguimiento** | [`BITACORA.md`](BITACORA.md) | Registro fase por fase del proceso de construcción del sistema |
-| **Revisión de Calidad** | [`AUDITORIA.md`](AUDITORIA.md) | Estado real del proyecto, hallazgos, deuda técnica y prioridades |
 | **Matriz de Requisitos** | [`docs/requisitos.md`](docs/requisitos.md) | Matriz cruzada de trazabilidad RF ↔ HU ↔ CU ↔ Endpoints |
 | **Requisitos Funcionales (RFs)**| [`docs/requisitos/RFs/`](docs/requisitos/RFs/) | 16 Requisitos Funcionales con entradas, proceso, salidas y reglas |
 | **Historias de Usuario (HUs)** | [`docs/requisitos/HUs/`](docs/requisitos/HUs/) | 33 HUs con criterios de aceptación `Dado que / Cuando / Entonces` |
 | **Casos de Uso (CUs)** | [`docs/requisitos/CUs/`](docs/requisitos/CUs/) | 33 CUs con secuencias normales, excepciones y diagramas Mermaid |
 | **Restricciones del Sistema** | [`docs/requisitos/restricciones.md`](docs/requisitos/restricciones.md) | Restricciones normativas (Ley 1581 Habeas Data), técnicas y de negocio |
 | **Arquitectura de Software** | [`docs/referencia-tecnica/architecture.md`](docs/referencia-tecnica/architecture.md) | Arquitectura en 3 capas, flujo cliente-servidor y decisiones técnicas |
-| **Esquema de Base de Datos** | [`docs/referencia-tecnica/database-schema.md`](docs/referencia-tecnica/database-schema.md) | Diccionario de 12 tablas, 3 vistas SQL, claves foráneas e índices |
+| **Esquema de Base de Datos** | [`docs/referencia-tecnica/database-schema.md`](docs/referencia-tecnica/database-schema.md) | Diccionario de 20 tablas, 4 vistas SQL, claves foráneas e índices |
 | **Referencia de API REST** | [`docs/referencia-tecnica/api-endpoints.md`](docs/referencia-tecnica/api-endpoints.md) | Especificación de endpoints con JSON requests, status HTTP y errores |
 | **Design System** | [`docs/referencia-tecnica/design-system.md`](docs/referencia-tecnica/design-system.md) | Paleta (`#000000`, `#00BCD4`, `#D4AF37`), tipografía y tokens UI |
 | **Patrones Arquitectónicos** | [`docs/conceptos/patrones-arquitectonicos.md`](docs/conceptos/patrones-arquitectonicos.md) | 10 patrones aplicados (MVC/Capas, DTO, Redux Store, Interceptor...) |
