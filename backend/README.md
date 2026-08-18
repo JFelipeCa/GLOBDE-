@@ -28,10 +28,9 @@ La API queda en <http://localhost:8000> y la documentación interactiva en
 
 ```bash
 cd backend
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env                   # DB_HOST=127.0.0.1
-uvicorn app.main:app --reload
+uv sync                                 # crea .venv e instala dependencias
+cp .env.example .env                    # DB_HOST=127.0.0.1
+uv run uvicorn app.main:app --reload
 ```
 
 > El `.env` **nunca** se sube al repositorio. Genera el secreto JWT con:
@@ -56,7 +55,8 @@ backend/
 ├── tests/                 # pytest (unitarias + integración)
 ├── Dockerfile
 ├── pytest.ini
-└── requirements.txt
+├── pyproject.toml
+└── uv.lock
 ```
 
 Cada dominio sigue el mismo camino: **router** (HTTP, permisos) →

@@ -102,15 +102,10 @@ mysql -u root -p < database/database.sql
 
 # 2. Backend (FastAPI)
 cd backend
-python -m venv venv
-# Activar entorno virtual:
-source venv/bin/activate        # En Linux/macOS y Windows Git Bash
-# venv\Scripts\activate         # En Windows CMD/PowerShell
-
-pip install -r requirements.txt
+uv sync                         # crea el entorno virtual e instala dependencias
 cp .env.example .env            # Configurar DB_HOST=127.0.0.1 y DB_PASSWORD
 
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 # → API disponible en: http://localhost:8000
 # → Documentación Swagger interactiva: http://localhost:8000/docs
 
@@ -177,7 +172,8 @@ GLOBDE-/
 │   │   └── main.py                   # Endpoints REST, esquemas Pydantic, conexión MySQL, SMTP
 │   ├── .env.example                  # Plantilla de variables de entorno seguras
 │   ├── Dockerfile                    # Imagen Docker de producción backend
-│   └── requirements.txt              # Dependencias de Python fijadas
+│   ├── pyproject.toml                # Dependencias de Python (gestionadas con uv)
+│   └── uv.lock                       # Lockfile reproducible
 ├── frontend/                         # Frontend — React 18 + Vite + TypeScript
 │   ├── src/
 │   │   ├── api/                      # Clientes HTTP Axios (`axiosClient.ts`, `globdeApi.ts`)

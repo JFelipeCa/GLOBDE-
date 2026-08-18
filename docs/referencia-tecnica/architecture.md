@@ -132,7 +132,7 @@ backend/
 │   └── __init__.py
 ├── .env.example         # Variables de entorno template
 ├── Dockerfile           # Imagen de despliegue para FastAPI
-└── requirements.txt     # Dependencias: fastapi, uvicorn, pydantic, bcrypt, mysql-connector-python
+└── pyproject.toml       # Dependencias (uv): fastapi, uvicorn, pydantic, bcrypt, mysql-connector-python
 ```
 
 ---

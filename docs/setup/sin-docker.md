@@ -39,17 +39,8 @@ mysql -u root -p < database/database.sql
 ```bash
 cd backend
 
-# Crear entorno virtual de Python
-python -m venv venv
-
-# Activar el entorno virtual:
-# En Linux / macOS / Git Bash:
-source venv/bin/activate
-# En Windows (CMD / PowerShell):
-# venv\Scripts\activate
-
-# Instalar dependencias
-pip install -r requirements.txt
+# Crear entorno virtual e instalar dependencias (uv lo hace en un solo paso)
+uv sync
 
 # Configurar variables de entorno
 cp .env.example .env
@@ -61,7 +52,7 @@ cp .env.example .env
 # DB_NAME=globde
 
 # Iniciar servidor FastAPI con recarga automática
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 - API activa en: `http://localhost:8000`
 - Swagger Docs: `http://localhost:8000/docs`
