@@ -49,8 +49,8 @@ Deberías ver los servicios `db` (MySQL 8.0) y `backend` (FastAPI) con estado `U
 ### 4. Iniciar el Frontend (React + Vite)
 ```bash
 cd frontend
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 La aplicación web estará disponible en: **`http://localhost:5173`**
 

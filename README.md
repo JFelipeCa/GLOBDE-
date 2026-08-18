@@ -88,8 +88,8 @@ docker compose up -d
 
 # 4. Iniciar el Frontend (en terminal separada)
 cd frontend
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 # → Frontend disponible en: http://localhost:5173
 ```
 
@@ -111,8 +111,8 @@ uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 # 3. Frontend (React + Vite)
 cd ../frontend
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 # → Aplicación disponible en: http://localhost:5173
 ```
 
@@ -148,7 +148,7 @@ cd frontend
 # Verificación de tipos TypeScript estricto
 npx tsc --noEmit
 # Verificación de linting
-npm run lint
+pnpm run lint
 ```
 
 ---

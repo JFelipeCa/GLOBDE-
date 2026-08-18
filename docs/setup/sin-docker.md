@@ -66,10 +66,10 @@ En una **segunda terminal**:
 cd frontend
 
 # Instalar dependencias de Node
-npm install
+pnpm install
 
 # Iniciar servidor de desarrollo Vite
-npm run dev
+pnpm run dev
 ```
 - Frontend activo en: `http://localhost:5173`
 
