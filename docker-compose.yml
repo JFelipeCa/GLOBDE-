@@ -5,7 +5,7 @@ services:
     container_name: globde_mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-globde123}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:?Error: define DB_PASSWORD en tu archivo .env antes de levantar el proyecto}
       MYSQL_DATABASE: ${DB_NAME:-globde}
     ports:
       - "3307:3306"
@@ -15,7 +15,7 @@ services:
       - ./database/database.sql:/docker-entrypoint-initdb.d/01-database.sql:ro
     healthcheck:
       
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-P", "3306", "-uroot", "-p${DB_PASSWORD:-globde123}", "--silent"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-P", "3306", "-uroot", "-p${DB_PASSWORD:?Error: define DB_PASSWORD en tu archivo .env antes de levantar el proyecto}", "--silent"]
       interval: 5s
       timeout: 5s
       retries: 30
@@ -32,7 +32,7 @@ services:
      
       DB_HOST: mysql
       DB_PORT: 3306
-      DB_PASSWORD: ${DB_PASSWORD:-globde123}
+      DB_PASSWORD: ${DB_PASSWORD:?Error: define DB_PASSWORD en tu archivo .env antes de levantar el proyecto}
       DB_NAME: ${DB_NAME:-globde}
     ports:
       - "8000:8000"
