@@ -40,7 +40,7 @@ Este repositorio contiene la arquitectura completa, el backend API REST, el fron
 | Capa | Tecnologías | Propósito |
 | :--- | :--- | :--- |
 | **Backend** | Python 3.13+, FastAPI, Uvicorn, Pydantic v2, bcrypt | API REST de alto rendimiento, validación de esquemas y hashing seguro |
-| **Frontend** | React 18+, TypeScript, Vite, Redux Toolkit, Axios | SPA reactiva, tipado estático estricto, gestión de estado y persistencia |
+| **Frontend** | React 19, TypeScript, Vite, Context API, Tailwind CSS 4 | SPA reactiva, tipado estático estricto, gestión de estado y persistencia |
 | **Base de Datos** | MySQL 8.0+ / MariaDB 10.5+ | Persistencia relacional (20 tablas, 4 vistas SQL, integridad referencial) |
 | **Email (Dev/Prod)** | Python `smtplib` + MIME (Mailpit en local / SMTP TLS) | Envío de tokens seguros de recuperación de contraseña y alertas |
 | **Contenedores** | Docker 24+, Docker Compose v2 | Entorno aislado y reproducible para base de datos y backend |
@@ -139,7 +139,7 @@ pnpm run dev
 cd backend
 source venv/bin/activate
 # Verificación de sintaxis e importaciones
-python -m py_compile app/main.py
+uv run python -m py_compile app/main.py
 ```
 
 ### Frontend (React + TypeScript)
@@ -166,19 +166,24 @@ GLOBDE-/
 │   └── database.sql                  # Script DDL/DML: 20 tablas, 4 vistas SQL, roles iniciales
 ├── backend/                          # Backend — FastAPI + Python 3.13
 │   ├── app/
-│   │   └── main.py                   # Endpoints REST, esquemas Pydantic, conexión MySQL, SMTP
+│   │   ├── main.py                   # Arranque de FastAPI, montaje de routers, CORS
+│   │   ├── routers/                  # 13 routers, uno por dominio (auth, citas, clientes...)
+│   │   ├── services/                 # Reglas de negocio + acceso a datos (SQL puro)
+│   │   ├── schemas/                  # Modelos Pydantic de entrada/salida
+│   │   └── core/                     # Config, seguridad (JWT/bcrypt), excepciones
+│   ├── tests/                        # pytest (132 tests: unitarias, reglas de negocio, API)
 │   ├── .env.example                  # Plantilla de variables de entorno seguras
 │   ├── Dockerfile                    # Imagen Docker de producción backend
 │   ├── pyproject.toml                # Dependencias de Python (gestionadas con uv)
 │   └── uv.lock                       # Lockfile reproducible
-├── frontend/                         # Frontend — React 18 + Vite + TypeScript
+├── frontend/                         # Frontend — React 19 + Vite + TypeScript
 │   ├── src/
-│   │   ├── api/                      # Clientes HTTP Axios (`axiosClient.ts`, `globdeApi.ts`)
-│   │   ├── components/               # Componentes UI (Navbar, Header, Footer, Sidebar, Cards...)
-│   │   ├── pages/                    # Vistas (LandingPage, LoginPage, DashboardAdmin/Barbero/Cliente...)
-│   │   ├── store/                    # Redux Toolkit (authSlice, dataSlice, hooks, store)
+│   │   ├── context/                  # AppContext: estado global vía React Context API
+│   │   ├── components/ui/            # Navbar, modales (Auth, Ticket), wizard de reservas
+│   │   ├── components/sections/      # Secciones de la landing (Hero, Servicios, Barberos...)
+│   │   ├── components/paneles/       # Dashboards por rol (Cliente, Barbero, Admin)
 │   │   ├── types.ts                  # Contratos y tipos TypeScript globales
-│   │   └── utils/                    # Formateadores de fecha, moneda y estados
+│   │   └── utils/                    # apiClient (fetch), formateadores de fecha y moneda
 │   ├── package.json                  # Dependencias de Node.js
 │   └── vite.config.ts                # Configuración del bundler Vite
 └── docs/                             # Documentación Técnica Completa
@@ -209,7 +214,7 @@ GLOBDE-/
 
 | Aspecto | Convención adoptada |
 | :--- | :--- |
-| **Nomenclatura backend** | Endpoints REST en minúsculas en español/inglés estandarizado (`/api/citas`, `/api/login`), variables snake_case |
+| **Nomenclatura backend** | Endpoints REST en minúsculas en español/inglés estandarizado (`/api/citas`, `/api/auth/login`), variables snake_case |
 | **Nomenclatura frontend** | Componentes en PascalCase (`DashboardAdminPage.tsx`), hooks en camelCase (`useAppDispatch`), tipos en PascalCase |
 | **Encabezados pedagógicos** | Todos los archivos de documentación inician con `<!-- ¿Qué? ¿Para qué? ¿Impacto? -->` |
 | **Commits** | Conventional Commits con formato semántico y justificación: `feat(citas): agregar validacion de traslape` |
@@ -233,7 +238,7 @@ Accede a la documentación completa según la necesidad:
 | **Esquema de Base de Datos** | [`docs/referencia-tecnica/database-schema.md`](docs/referencia-tecnica/database-schema.md) | Diccionario de 20 tablas, 4 vistas SQL, claves foráneas e índices |
 | **Referencia de API REST** | [`docs/referencia-tecnica/api-endpoints.md`](docs/referencia-tecnica/api-endpoints.md) | Especificación de endpoints con JSON requests, status HTTP y errores |
 | **Design System** | [`docs/referencia-tecnica/design-system.md`](docs/referencia-tecnica/design-system.md) | Paleta (`#000000`, `#00BCD4`, `#D4AF37`), tipografía y tokens UI |
-| **Patrones Arquitectónicos** | [`docs/conceptos/patrones-arquitectonicos.md`](docs/conceptos/patrones-arquitectonicos.md) | 10 patrones aplicados (MVC/Capas, DTO, Redux Store, Interceptor...) |
+| **Patrones Arquitectónicos** | [`docs/conceptos/patrones-arquitectonicos.md`](docs/conceptos/patrones-arquitectonicos.md) | 10 patrones aplicados (MVC/Capas, DTO, Context API, Component-Driven UI...) |
 | **Seguridad OWASP Top 10** | [`docs/conceptos/owasp-top-10.md`](docs/conceptos/owasp-top-10.md) | Análisis y mitigación de vulnerabilidades OWASP 2021 en Globde |
 | **Accesibilidad WCAG / ARIA** | [`docs/conceptos/accesibilidad-aria-wcag.md`](docs/conceptos/accesibilidad-aria-wcag.md) | Cumplimiento de estándares de accesibilidad e inclusión web |
 | **Guía de Setup Docker** | [`docs/setup/con-docker.md`](docs/setup/con-docker.md) | Despliegue en contenedores, variables y resolución de problemas |
@@ -289,7 +294,7 @@ Este proyecto fue desarrollado en el marco del programa **Tecnólogo en Análisi
 
 1. **Análisis y Especificación**: Levantamiento de requisitos formales (RF, HU, CU, RNF, Restricciones).
 2. **Diseño de Software y Datos**: Modelado Entidad-Relación, normalización de base de datos y arquitectura en capas.
-3. **Construcción y Desarrollo**: Implementación backend con FastAPI y frontend con React + Redux + TypeScript.
+3. **Construcción y Desarrollo**: Implementación backend con FastAPI y frontend con React + Context API + TypeScript.
 4. **Seguridad y Calidad**: Hashing de credenciales, mitigación de riesgos OWASP, accesibilidad WCAG y manejo de excepciones.
 
 ---
@@ -315,7 +320,7 @@ Este proyecto está licenciado bajo [Creative Commons Atribución-NoComercial-Co
 | :--- | :--- |
 | **Laura** | Diseño y Administración de Base de Datos (DBA / Data Modeling) |
 | **Juan Felipe Cañón** | Desarrollo Backend (FastAPI, Integración MySQL, Autenticación y Endpoints) |
-| **Dayanna Patiño** | Desarrollo Frontend (React, TypeScript, Redux Toolkit, UI/UX & Responsive) |
+| **Dayanna Patiño** | Desarrollo Frontend (React, TypeScript, Context API, UI/UX & Responsive) |
 
 ---
 *Globde — Excelencia en la gestión de servicios y barbería.*

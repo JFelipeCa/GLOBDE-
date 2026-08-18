@@ -41,14 +41,5 @@
     "src/types/**/*.ts*",
     "src/vite-env.d.ts",
     "vite.config.ts"
-  ],
-  "exclude": [
-    "src/api/**",
-    "src/store/**",
-    "src/pages/**",
-    "src/components/Navbar.tsx",
-    "src/components/ProtectedRoute.tsx",
-    "src/components/Citas.tsx",
-    "src/components/Disponibilidad.tsx"
   ]
 }

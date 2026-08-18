@@ -49,10 +49,10 @@ export const PanelBarbero: React.FC = () => {
     .map((ini) => ({ ini, fin: sumarMinutos(ini, servWalk.duracion_minutos) }))
     .filter((f) => !ocupadasHoy.some((o) => haySolape(f.ini, f.fin, o.inicio, o.fin)));
 
-  const crearWalkin = (e: React.FormEvent) => {
+  const crearWalkin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!wHora) { setWError('Selecciona una franja libre.'); return; }
-    const r = crearCita({
+    const r = await crearCita({
       servicio_id: Number(wServ), barbero_id: barbero.id_barbero, fecha: hoy, hora_inicio: wHora,
       extras: [], usar_puntos: false, puntos_a_usar: 0,
       nombre: wNombre || 'Cliente presencial', correo: 'walkin@globde.com',

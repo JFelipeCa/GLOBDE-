@@ -93,22 +93,22 @@ export const AuthModal: React.FC = () => {
     setCodigoInput(['', '', '', '', '', '']); limpiarRecuperacion();
   };
 
-  const enviarLogin = (e: React.FormEvent) => {
+  const enviarLogin = async (e: React.FormEvent) => {
     e.preventDefault(); setError('');
     if (!validarCorreo(correo)) return setError('Ingresa un correo electrónico válido.');
     if (contrasena.length < 6) return setError('La contraseña debe tener al menos 6 caracteres.');
-    const r = login(correo, contrasena);
+    const r = await login(correo, contrasena);
     if (!r.ok) setError(r.mensaje);
   };
 
-  const enviarRegistro = (e: React.FormEvent) => {
+  const enviarRegistro = async (e: React.FormEvent) => {
     e.preventDefault(); setError('');
     if (!validarNombre(rNombre)) return setError('El nombre solo admite letras y mínimo 3 caracteres.');
     if (!validarCorreo(rCorreo)) return setError('Ingresa un correo electrónico válido.');
     if (!validarTelefono(rTel)) return setError('El teléfono debe tener entre 7 y 15 dígitos.');
     if (!evaluarPassword(rPwd).esSegura) return setError('Tu contraseña aún no cumple todos los requisitos de seguridad.');
     if (rPwd !== rPwd2) return setError('Las contraseñas no coinciden.');
-    const r = registrar(rNombre, rCorreo, rTel, rPwd);
+    const r = await registrar(rNombre, rCorreo, rTel, rPwd);
     if (!r.ok) setError(r.mensaje);
   };
 
