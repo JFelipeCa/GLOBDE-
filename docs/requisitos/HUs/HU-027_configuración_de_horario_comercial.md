@@ -16,8 +16,17 @@
 | **Título** | Configuración de horario comercial |
 | **Módulo** | Configuración |
 | **Prioridad** | Media |
-| **Estado** | Implementada |
+| **Estado** | Parcial |
 | **RF Asociados** | RF-015 |
+
+> [!WARNING]
+> **Estado real (verificado contra el código, agosto 2026): parcial.**
+> El esquema define `horarios_barbero` (horario por barbero, endpoints
+> `POST/PUT/DELETE /barberos/{id}/horarios`), pero **no existe una tabla de
+> configuración global del negocio** ni endpoints para el horario comercial
+> único. Hoy el horario de atención es la unión de los horarios individuales.
+> Falta: tabla `configuracion_negocio` (o equivalente) + endpoints de lectura
+> y escritura + validación de que los horarios de barbero caigan dentro de él.
 
 ---
 

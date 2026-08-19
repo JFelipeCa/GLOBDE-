@@ -6,6 +6,23 @@ Este documento indexa las **33 Historias de Usuario** y sus **33 Casos de Uso** 
 organizados por módulo funcional. Cada uno tiene su propio archivo con el detalle completo,
 incluyendo criterios de aceptación y diagramas de flujo.
 
+Los **16 requisitos funcionales** están en [`requisitos/RFs/`](requisitos/RFs/) y los **6 no
+funcionales** en [`requisitos/RNFs/`](requisitos/RNFs/). La correspondencia completa
+RF → HU → CU está en [`requisitos/matriz-trazabilidad.md`](requisitos/matriz-trazabilidad.md).
+
+> [!IMPORTANT]
+> **29 de las 33 historias están implementadas y verificadas contra el código.** Las cuatro
+> restantes se marcan aquí con su estado real:
+>
+> | HU | Estado | Qué falta |
+> | :--- | :--- | :--- |
+> | [HU-027](requisitos/HUs/HU-027_configuraci%C3%B3n_de_horario_comercial.md) | 🟡 Parcial | Horario global del negocio; hoy solo hay horario por barbero |
+> | [HU-028](requisitos/HUs/HU-028_registro_de_d%C3%ADas_festivos_o_cierres.md) | 🟡 Parcial | Cierres de día completo; `bloqueos_agenda` exige un barbero y un rango horario |
+> | [HU-032](requisitos/HUs/HU-032_exportaci%C3%B3n_de_reportes_a_excel_csv.md) | 🔴 Pendiente | Endpoint de descarga CSV/Excel; no existe |
+> | [HU-033](requisitos/HUs/HU-033_gesti%C3%B3n_de_lista_de_espera.md) | 🔴 Pendiente | Tabla, router y servicio; no existe nada |
+>
+> Estas cuatro son el backlog pendiente del tablero kanban.
+
 ---
 
 ## Autenticación y Acceso
@@ -63,8 +80,8 @@ incluyendo criterios de aceptación y diagramas de flujo.
 
 | HU | Historia de Usuario | CU | Caso de Uso |
 |---|---|---|---|
-| [HU-027](requisitos/HUs/HU-027_configuraci%C3%B3n_de_horario_comercial.md) | configurar el horario de atención del negocio indicando... | [CU-27](requisitos/CUs/CU-27_configuracion_de_horario_de_atencion.md) | Configuración de Horario de Atención |
-| [HU-028](requisitos/HUs/HU-028_registro_de_d%C3%ADas_festivos_o_cierres.md) | registrar días festivos o cierres especiales del negoci... | [CU-28](requisitos/CUs/CU-28_registro_de_dias_no_laborales.md) | Registro de Días No Laborales |
+| 🟡 [HU-027](requisitos/HUs/HU-027_configuraci%C3%B3n_de_horario_comercial.md) | configurar el horario de atención del negocio indicando... | [CU-27](requisitos/CUs/CU-27_configuracion_de_horario_de_atencion.md) | Configuración de Horario de Atención |
+| 🟡 [HU-028](requisitos/HUs/HU-028_registro_de_d%C3%ADas_festivos_o_cierres.md) | registrar días festivos o cierres especiales del negoci... | [CU-28](requisitos/CUs/CU-28_registro_de_dias_no_laborales.md) | Registro de Días No Laborales |
 
 ## Reportes Administrativos
 
@@ -73,13 +90,13 @@ incluyendo criterios de aceptación y diagramas de flujo.
 | [HU-029](requisitos/HUs/HU-029_reporte_anal%C3%ADtico_de_ingresos.md) | ver un reporte de ingresos del negocio filtrado por per... | [CU-29](requisitos/CUs/CU-29_reporte_de_ingresos.md) | Reporte de Ingresos |
 | [HU-030](requisitos/HUs/HU-030_ranking_de_servicios_m%C3%A1s_solicitados.md) | ver un ranking de los servicios más solicitados por los... | [CU-30](requisitos/CUs/CU-30_ranking_de_servicios_mas_solicitados.md) | Ranking de Servicios más Solicitados |
 | [HU-031](requisitos/HUs/HU-031_reporte_de_desempe%C3%B1o_por_barbero.md) | ver un reporte del desempeño individual de cada barbero... | [CU-31](requisitos/CUs/CU-31_reporte_de_desempeno_por_barbero.md) | Reporte de Desempeño por Barbero |
-| [HU-032](requisitos/HUs/HU-032_exportaci%C3%B3n_de_reportes_a_excel_csv.md) | exportar los reportes generados en el sistema en format... | [CU-32](requisitos/CUs/CU-32_exportacion_de_reportes.md) | Exportación de Reportes |
+| 🔴 [HU-032](requisitos/HUs/HU-032_exportaci%C3%B3n_de_reportes_a_excel_csv.md) | exportar los reportes generados en el sistema en format... | [CU-32](requisitos/CUs/CU-32_exportacion_de_reportes.md) | Exportación de Reportes |
 
 ## Lista de Espera
 
 | HU | Historia de Usuario | CU | Caso de Uso |
 |---|---|---|---|
-| [HU-033](requisitos/HUs/HU-033_gesti%C3%B3n_de_lista_de_espera.md) | inscribirme en una lista de espera cuando todos los hor... | [CU-33](requisitos/CUs/CU-33_gestion_de_lista_de_espera.md) | Gestión de Lista de Espera |
+| 🔴 [HU-033](requisitos/HUs/HU-033_gesti%C3%B3n_de_lista_de_espera.md) | inscribirme en una lista de espera cuando todos los hor... | [CU-33](requisitos/CUs/CU-33_gestion_de_lista_de_espera.md) | Gestión de Lista de Espera |
 
 ---
 
