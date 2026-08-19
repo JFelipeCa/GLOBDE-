@@ -47,32 +47,35 @@ Ambas colecciones están enlazadas una a una desde [`requisitos.md`](requisitos.
 
 ### Requisitos funcionales
 
-> [!WARNING]
-> La carpeta `requisitos/RFs/` contiene **dos series solapadas** del mismo alcance,
-> resultado de una reorganización a medias. Ninguna está enlazada desde
-> `requisitos.md`. Antes de seguir añadiendo requisitos hay que elegir una y
-> archivar la otra.
+- [`requisitos/RFs/`](requisitos/RFs/) — **16 requisitos funcionales** (`RF-001` … `RF-016`),
+  agrupados por módulo. Cada uno declara módulo, prioridad, HUs asociadas y reglas de negocio.
 
-| Serie | Archivos | Formato | Descripción |
-| :--- | ---: | :--- | :--- |
-| **Granular** | 34 | `RF-0NN_slug-con-guiones.md` | Un requisito por acción concreta (`RF-002_inicio-de-sesion`, `RF-014_reserva-de-cita-cliente`…) |
-| **Agrupada** | 16 | `RF-0NN_slug_con_guiones_bajos.md` | Requisitos agrupados por módulo (`RF-001_registro_y_autenticacion_usuarios`…) |
+La trazabilidad completa RF → HU → CU está en
+[`requisitos/matriz-trazabilidad.md`](requisitos/matriz-trazabilidad.md).
+
+> [!NOTE]
+> Hasta agosto de 2026 esta carpeta contenía **dos series solapadas** del mismo alcance
+> (34 requisitos granulares + 16 agrupados), resultado de una reorganización a medias.
+> Se conservó la serie agrupada, que es la que tiene contenido completo, y se eliminó la
+> granular, que duplicaba una a una las historias de usuario. Los archivos siguen
+> disponibles en el historial de git si se necesitan recuperar.
 
 ### Requisitos no funcionales
 
-> [!WARNING]
-> Tres RNFs (`RNF-003`, `RNF-005`, `RNF-006`) existen **por duplicado**: una versión
-> corta de un solo bloque y otra detallada. Las detalladas (nombre más largo) son
-> las que se mantienen al día.
+[`requisitos/RNFs/`](requisitos/RNFs/) — **6 requisitos no funcionales**:
 
-| RNF | Versión vigente | Duplicado a archivar |
-| :--- | :--- | :--- |
-| RNF-001 | `RNF-001_seguridad.md` | — |
-| RNF-002 | `RNF-002_rendimiento.md` | — |
-| RNF-003 | `RNF-003_usabilidad_ux_ui.md` | `RNF-003_usabilidad-ux-ui.md` |
-| RNF-004 | `RNF-004_accesibilidad.md` | — |
-| RNF-005 | `RNF-005_mantenibilidad_calidad.md` | `RNF-005_mantenibilidad.md` |
-| RNF-006 | `RNF-006_compatibilidad_portabilidad.md` | `RNF-006_compatibilidad.md` |
+| RNF | Archivo |
+| :--- | :--- |
+| RNF-001 | [`RNF-001_seguridad.md`](requisitos/RNFs/RNF-001_seguridad.md) |
+| RNF-002 | [`RNF-002_rendimiento.md`](requisitos/RNFs/RNF-002_rendimiento.md) |
+| RNF-003 | [`RNF-003_usabilidad_ux_ui.md`](requisitos/RNFs/RNF-003_usabilidad_ux_ui.md) |
+| RNF-004 | [`RNF-004_accesibilidad.md`](requisitos/RNFs/RNF-004_accesibilidad.md) |
+| RNF-005 | [`RNF-005_mantenibilidad_calidad.md`](requisitos/RNFs/RNF-005_mantenibilidad_calidad.md) |
+| RNF-006 | [`RNF-006_compatibilidad_portabilidad.md`](requisitos/RNFs/RNF-006_compatibilidad_portabilidad.md) |
+
+> [!NOTE]
+> `RNF-003`, `RNF-005` y `RNF-006` existían por duplicado (una versión corta de un solo
+> bloque y otra detallada). Se conservó la detallada de cada uno.
 
 ---
 
