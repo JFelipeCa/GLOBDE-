@@ -7,8 +7,8 @@
 -->
 
 > **Requisitos Previos**:
-> - Python 3.12+ instalado (`python --version`)
-> - Node.js 22 LTS+ y pnpm 9+ (`node --version`, `pnpm --version`)
+> - Python 3.13+ instalado (`python --version`)
+> - Node.js 22 LTS+ y pnpm 11+ (`node --version`, `pnpm --version`)
 > - Servidor MySQL 8.0+ instalado y corriendo localmente (`mysql --version`)
 
 ---
@@ -17,8 +17,8 @@
 
 ### 1. Clonar el Repositorio
 ```bash
-git clone https://github.com/JFelipeCa/GLOBDE-.git
-cd GLOBDE-
+git clone https://github.com/JFelipeCa/Globde.git
+cd Globde
 ```
 
 ---
@@ -57,9 +57,17 @@ cp .env.example .env
 # DB_USER=root
 # DB_PASSWORD=tu_password_local
 # DB_NAME=globde
+#
+# Y el secreto de JWT (obligatorio, viene vacío):
+# JWT_SECRET=...  genera uno con:
+#   python -c "import secrets; print(secrets.token_urlsafe(48))"
 
-# Crear el esquema y los datos semilla con Alembic
+# Crear el esquema y los datos semilla con Alembic (20 tablas + 4 vistas)
 uv run alembic upgrade head
+
+# Si la base YA existía con el esquema viejo de database.sql, en vez del comando
+# anterior márcala como migrada (si no, fallará con "1050 Table 'roles' already exists"):
+#   uv run alembic stamp head
 
 # Iniciar servidor FastAPI con recarga automática
 uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
@@ -85,6 +93,28 @@ pnpm run dev
 
 ---
 
-## 🪟 Inicio Rápido en Windows (`Arrancar-Globde.bat`)
+## 🧪 Ejecutar las pruebas
 
-Si estás en Windows con MySQL ya corriendo como servicio, puedes hacer doble clic en el archivo `Arrancar-Globde.bat` situado en la raíz del proyecto para abrir ambas terminales de forma automática.
+```bash
+cd backend
+uv run pytest                                        # 132 pruebas
+uv run pytest --cov=app --cov-report=term-missing    # con cobertura (~70%)
+```
+
+> Las pruebas requieren la base MySQL accesible con las variables `DB_*` del `.env`.
+> Sin ella, la mayoría quedarán en `skipped`.
+
+---
+
+## 🪟 Nota para Windows
+
+Se recomienda usar **Git Bash** o **WSL2** para ejecutar los comandos de esta guía con
+sintaxis bash uniforme. Necesitarás dos terminales abiertas: una para el backend
+(`uv run uvicorn ...`) y otra para el frontend (`pnpm run dev`).
+
+---
+
+## 📎 Ver también
+
+- [`docs/setup/con-docker.md`](con-docker.md) — instalación con Docker Compose (recomendada).
+- [`database/README_DB.md`](../../database/README_DB.md) — gestión del esquema con Alembic.

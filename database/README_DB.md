@@ -1,10 +1,17 @@
 # Base de Datos GLOBDE v2
 
-> **Importante:** desde la incorporación de Alembic, el esquema **no se crea
-> ejecutando `database.sql`**. La fuente de verdad son las migraciones en
-> `backend/alembic/versions/`. Para levantar una base:
-> `cd backend && uv run alembic upgrade head`.
-> Este documento y `database.sql` se conservan como referencia del modelo.
+> [!IMPORTANT]
+> **El esquema ya no se crea ejecutando `database.sql`.** La fuente de verdad son las
+> migraciones de Alembic en `backend/alembic/versions/`. Para levantar una base:
+>
+> ```bash
+> cd backend && uv run alembic upgrade head     # o, con Docker: docker compose up -d --build
+> ```
+>
+> `database/database.sql` se conserva **solo como referencia histórica del modelo** y no se
+> ejecuta en ningún flujo (ni Docker, ni manual, ni CI). Los requisitos de este documento que
+> citan `database.sql` como "archivo ejecutable" quedaron cubiertos por las migraciones; se
+> anotan abajo con su equivalencia actual.
 
 ## Objetivo
 
@@ -27,11 +34,15 @@ Esta versión reemplaza el modelo inicial de pruebas por una estructura profesio
 
 ## Alcance
 
-La modificación corresponde únicamente a la base de datos ubicada en:
+La modificación corresponde únicamente al modelo de datos. Su implementación vive hoy en las
+migraciones de Alembic:
 
 ```text
-database/database.sql
+backend/alembic/versions/dd2ee59368e5_esquema_inicial.py   # 20 tablas + 4 vistas
+backend/alembic/versions/b2c3d4e5f6a7_*.py                 # datos semilla (head)
 ```
+
+El archivo `database/database.sql` documenta el mismo modelo en SQL plano, como referencia.
 
 No se modifican funcionalidades de backend ni frontend en esta rama.
 
@@ -115,15 +126,20 @@ Los eventos relevantes deben poder auditarse mediante tablas de logs.
 
 ### RNF-DB-05 - Mantenibilidad
 
-El archivo SQL debe estar ordenado por secciones y documentado con comentarios.
+El esquema debe estar ordenado, documentado y **versionado**. Se cumple mediante migraciones
+Alembic incrementales y reversibles (`upgrade()` / `downgrade()`), en lugar de un único script
+monolítico.
 
 ### RNF-DB-06 - Compatibilidad Docker
 
-La base de datos debe poder inicializarse mediante Docker usando el archivo:
+La base de datos debe poder inicializarse mediante Docker sin pasos manuales. Se cumple con
+`docker-entrypoint.sh` del servicio `backend`, que espera a MySQL y ejecuta:
 
-```text
-database/database.sql
+```bash
+alembic upgrade head
 ```
+
+MySQL solo crea la base vacía (`MYSQL_DATABASE`); el esquema y las semillas los aplica Alembic.
 
 ### RNF-DB-07 - Codificación
 
@@ -172,7 +188,9 @@ Como administrador, quiero revisar eventos importantes del sistema para tener tr
 - Los desarrollos deben integrarse según el flujo acordado por el equipo.
 - Las ramas de desarrollo deben seguir el formato `feature/<nombre-feature>`.
 - La base de datos debe inicializarse desde Docker sin depender de configuraciones manuales adicionales.
-- El archivo principal ejecutable de base de datos debe ser `database/database.sql`.
+- El esquema debe aplicarse mediante migraciones de Alembic (`alembic upgrade head`); **no** mediante
+  la ejecución manual de un `.sql`.
+- Todo cambio de esquema debe entrar como una migración nueva, con su `downgrade()` correspondiente.
 
 ---
 
@@ -181,10 +199,19 @@ Como administrador, quiero revisar eventos importantes del sistema para tener tr
 ```text
 database/
 ├── .gitignore
-├── database.sql
+├── database.sql                       # referencia histórica del modelo (NO se ejecuta)
 ├── README_DB.md
 └── docs/
     └── cambios_backend_requeridos.md
+
+backend/
+├── alembic.ini                        # config de Alembic (sin sqlalchemy.url: la arma env.py)
+├── docker-entrypoint.sh               # espera a MySQL y corre 'alembic upgrade head'
+└── alembic/
+    ├── env.py                         # construye la URL desde get_settings()
+    └── versions/
+        ├── dd2ee59368e5_esquema_inicial.py    # 20 tablas + 4 vistas
+        └── b2c3d4e5f6a7_*.py                  # datos semilla (head)
 ```
 
 ---
@@ -227,14 +254,45 @@ Los datos de prueba usan correos ficticios y no incluyen información personal r
 
 ## Ejecución con Docker
 
-Para reconstruir la base de datos desde cero:
+En un arranque normal no hay que hacer nada: el entrypoint del backend aplica las migraciones
+pendientes automáticamente.
 
 ```bash
-docker compose down -v
 docker compose up -d --build
 ```
 
-El parámetro `-v` elimina el volumen de MySQL y permite cargar nuevamente `database/database.sql`.
+Para reconstruir la base **desde cero**:
+
+```bash
+docker compose down -v      # ⚠️ elimina el volumen mysql_data: se pierden TODOS los datos locales
+docker compose up -d --build
+```
+
+El parámetro `-v` borra el volumen de MySQL; al volver a levantar, Alembic recrea las 20 tablas,
+las 4 vistas y los datos semilla.
+
+### Comandos útiles de Alembic
+
+```bash
+docker compose exec backend alembic current                    # revisión actual
+docker compose exec backend alembic history --verbose          # historial de migraciones
+docker compose exec backend alembic upgrade head               # aplicar pendientes
+docker compose exec backend alembic downgrade -1               # revertir la última
+docker compose exec backend alembic revision -m "mi cambio"    # crear una nueva
+```
+
+### Si ya tenías la base creada con `database.sql`
+
+`alembic upgrade head` fallará con `1050 Table 'roles' already exists`. Marca la base como
+migrada sin reaplicar el esquema:
+
+```bash
+docker compose exec backend alembic stamp head
+```
+
+> [!WARNING]
+> MySQL no revierte DDL dentro de una transacción. Si una migración falla a mitad, la base queda
+> en un estado intermedio: recréala con `down -v` antes de reintentar.
 
 ---
 
@@ -246,11 +304,18 @@ Entrar al contenedor de MySQL:
 docker exec -it globde_mysql mysql -uroot -p
 ```
 
+O desde el host, recordando que MySQL se publica en el puerto **3307**:
+
+```bash
+mysql -h 127.0.0.1 -P 3307 -u root -p globde
+```
+
 Seleccionar la base:
 
 ```sql
 USE globde;
-SHOW TABLES;
+SHOW TABLES;                      -- 20 tablas + 4 vistas + alembic_version
+SELECT * FROM alembic_version;    -- debe mostrar la revisión head
 SELECT COUNT(*) FROM usuarios;
 SELECT COUNT(*) FROM servicios;
 SELECT COUNT(*) FROM password_reset_tokens;
