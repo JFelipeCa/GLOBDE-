@@ -18,3 +18,9 @@ frontend/.env
 
 # Cache de pytest
 .pytest_cache/
+
+# Reportes de cobertura (los genera el CI)
+.coverage
+coverage.xml
+htmlcov/
+resultados-pytest.xml
