@@ -73,16 +73,47 @@ jobs:
           echo "MySQL no respondio tras 120 segundos." >&2
           exit 1
 
-      - name: Cargar esquema y datos semilla
+      - name: Crear el esquema con Alembic
+        working-directory: backend
         run: |
-          mysql -h 127.0.0.1 -P 3306 -uroot -p"$DB_PASSWORD" < database/database.sql
-          # Verificacion: sin las semillas, los tests de integracion se saltan
-          # en silencio y la cobertura vuelve a caer a 7%.
+          # La base se construye con las migraciones, no con database.sql.
+          # Asi cada push comprueba que las migraciones siguen siendo la
+          # fuente de verdad del esquema.
+          uv run alembic upgrade head
+          uv run alembic current
+
+      - name: Comprobar que las migraciones son reversibles
+        working-directory: backend
+        run: |
+          # Un downgrade roto solo se descubre el dia que hay que revertir
+          # en produccion. Mejor descubrirlo aqui.
+          uv run alembic downgrade base
+          restantes=$(mysql -h 127.0.0.1 -P 3306 -uroot -p"$DB_PASSWORD" -N -B -e \
+            "SELECT COUNT(*) FROM information_schema.tables
+             WHERE table_schema='$DB_NAME' AND table_name <> 'alembic_version';")
+          if [ "$restantes" -ne 0 ]; then
+            echo "El downgrade dejo $restantes objetos sin borrar." >&2
+            exit 1
+          fi
+          uv run alembic upgrade head
+
+      - name: Verificar esquema y datos semilla
+        run: |
+          # Sin las semillas, los tests de integracion se saltan en silencio
+          # y la cobertura vuelve a caer a 7%.
           tablas=$(mysql -h 127.0.0.1 -P 3306 -uroot -p"$DB_PASSWORD" -N -B -e \
-            "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='$DB_NAME';")
+            "SELECT COUNT(*) FROM information_schema.tables
+             WHERE table_schema='$DB_NAME' AND table_name <> 'alembic_version';")
           echo "Tablas y vistas creadas: $tablas"
           if [ "$tablas" -lt 20 ]; then
             echo "Se esperaban al menos 20 objetos en '$DB_NAME'." >&2
+            exit 1
+          fi
+          usuarios=$(mysql -h 127.0.0.1 -P 3306 -uroot -p"$DB_PASSWORD" -N -B -e \
+            "SELECT COUNT(*) FROM $DB_NAME.usuarios;")
+          echo "Usuarios semilla: $usuarios"
+          if [ "$usuarios" -lt 6 ]; then
+            echo "Faltan datos semilla: se esperaban 6 usuarios." >&2
             exit 1
           fi
 

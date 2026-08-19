@@ -1,5 +1,11 @@
 # Base de Datos GLOBDE v2
 
+> **Importante:** desde la incorporación de Alembic, el esquema **no se crea
+> ejecutando `database.sql`**. La fuente de verdad son las migraciones en
+> `backend/alembic/versions/`. Para levantar una base:
+> `cd backend && uv run alembic upgrade head`.
+> Este documento y `database.sql` se conservan como referencia del modelo.
+
 ## Objetivo
 
 Rediseñar la base de datos de GLOBDE para dejarla segura, moderna, ordenada y preparada para una versión funcional orientada a clientes reales.

@@ -26,11 +26,14 @@ cd GLOBDE-
 ### 2. Configurar y Poblar la Base de Datos MySQL
 
 1. Abre tu cliente de base de datos preferido (MySQL Workbench, DBeaver, HeidiSQL o terminal).
-2. Ejecuta el script completo ubicado en `database/database.sql`:
+2. Crea la base de datos **vacía**. El esquema no se carga a mano: lo generan
+   las migraciones de Alembic en el paso 3.
 ```bash
-mysql -u root -p < database/database.sql
+mysql -u root -p -e "CREATE DATABASE globde CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 ```
-3. Verifica que se haya creado la base de datos `globde` con las 12 tablas y 3 vistas SQL.
+
+> El archivo `database/database.sql` se conserva como referencia del modelo,
+> pero ya no es la fuente de verdad del esquema. Ver `backend/alembic/README.md`.
 
 ---
 
@@ -50,6 +53,9 @@ cp .env.example .env
 # DB_USER=root
 # DB_PASSWORD=tu_password_local
 # DB_NAME=globde
+
+# Crear el esquema y los datos semilla con Alembic
+uv run alembic upgrade head
 
 # Iniciar servidor FastAPI con recarga automática
 uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000

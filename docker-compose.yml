@@ -11,8 +11,9 @@ services:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      
-      - ./database/database.sql:/docker-entrypoint-initdb.d/01-database.sql:ro
+      # El esquema ya no se carga desde database.sql: lo crea Alembic
+      # ('alembic upgrade head' en el entrypoint del backend). MySQL solo
+      # crea la base vacia via MYSQL_DATABASE.
     healthcheck:
       
       test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-P", "3306", "-uroot", "-p${DB_PASSWORD:?Error: define DB_PASSWORD en tu archivo .env antes de levantar el proyecto}", "--silent"]

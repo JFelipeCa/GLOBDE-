@@ -1,7 +1,7 @@
 # GLOBDE API — Backend v2
 
-API REST de la barbería GLOBDE, adaptada al esquema de base de datos **v2**
-(`database/database.sql`) y al contrato descrito en
+API REST de la barbería GLOBDE. El esquema de base de datos lo gestionan las
+migraciones de Alembic (`backend/alembic/`); el contrato está descrito en
 `database/docs/cambios_backend_requeridos.md`.
 
 - **Framework:** FastAPI (Python 3.13)
@@ -20,7 +20,9 @@ cp backend/.env.example backend/.env   # y completa los valores
 docker compose up --build
 ```
 
-Levanta MySQL (con `database/database.sql` cargado automáticamente) y la API.
+Levanta MySQL y la API. El contenedor del backend ejecuta
+`alembic upgrade head` al arrancar, así que el esquema y los datos semilla se
+crean solos la primera vez.
 La API queda en <http://localhost:8000> y la documentación interactiva en
 <http://localhost:8000/docs>.
 
@@ -30,8 +32,13 @@ La API queda en <http://localhost:8000> y la documentación interactiva en
 cd backend
 uv sync                                 # crea .venv e instala dependencias
 cp .env.example .env                    # DB_HOST=127.0.0.1
+uv run alembic upgrade head             # crea el esquema y los datos semilla
 uv run uvicorn app.main:app --reload
 ```
+
+> La base de datos debe existir antes del primer `upgrade`:
+> `mysql -u root -p -e "CREATE DATABASE globde CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"`
+> Detalles de las migraciones en [`alembic/README.md`](alembic/README.md).
 
 > El `.env` **nunca** se sube al repositorio. Genera el secreto JWT con:
 > `python -c "import secrets; print(secrets.token_urlsafe(48))"`
@@ -50,6 +57,9 @@ backend/
 │   ├── services/          # reglas de negocio + acceso a datos (SQL puro)
 │   ├── routers/           # 13 routers, uno por dominio
 │   └── utils/             # paginación
+├── alembic/               # migraciones de base de datos (ver alembic/README.md)
+│   └── versions/
+├── alembic.ini
 ├── scripts/
 │   └── limpiar_datos_prueba.py
 ├── tests/                 # pytest (unitarias + integración)

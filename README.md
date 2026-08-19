@@ -97,13 +97,15 @@ pnpm run dev
 
 ```bash
 # 1. Base de datos MySQL local
-# Conéctate a tu servidor MySQL e importa el script con las 20 tablas y vistas:
-mysql -u root -p < database/database.sql
+# Crea la base vacía; el esquema lo generan las migraciones de Alembic:
+mysql -u root -p -e "CREATE DATABASE globde CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 
 # 2. Backend (FastAPI)
 cd backend
 uv sync                         # crea el entorno virtual e instala dependencias
 cp .env.example .env            # Configurar DB_HOST=127.0.0.1 y DB_PASSWORD
+
+uv run alembic upgrade head     # crea las 20 tablas, 4 vistas y los datos semilla
 
 uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 # → API disponible en: http://localhost:8000
@@ -163,7 +165,7 @@ GLOBDE-/
 ├── docker-compose.yml                # Orquestación de MySQL + FastAPI Backend
 ├── README.md                         # Documento maestro del proyecto (este archivo)
 ├── database/
-│   └── database.sql                  # Script DDL/DML: 20 tablas, 4 vistas SQL, roles iniciales
+│   └── database.sql                  # Referencia histórica del modelo (el esquema lo crea Alembic)
 ├── backend/                          # Backend — FastAPI + Python 3.13
 │   ├── app/
 │   │   ├── main.py                   # Arranque de FastAPI, montaje de routers, CORS
