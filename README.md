@@ -54,13 +54,28 @@ Antes de comenzar, asegúrate de contar con el siguiente software instalado:
 
 | Herramienta | Versión mínima recomendada | Comando de verificación |
 | :--- | :--- | :--- |
-| **Python** | 3.12+ | `python3 --version` o `python --version` |
+| **Python** | 3.13+ | `python3 --version` o `python --version` |
+| **uv** | 0.5+ | `uv --version` |
 | **Node.js** | 22 LTS+ | `node --version` |
-| **npm** o **pnpm** | npm 10+ / pnpm 9+ | `npm --version` o `pnpm --version` |
+| **pnpm** | 11+ | `pnpm --version` |
 | **Docker** | 24.0+ | `docker --version` |
 | **Docker Compose** | 2.20+ | `docker compose version` |
 | **MySQL Server** *(si no usas Docker)* | 8.0+ | `mysql --version` |
 | **Git** | 2.40+ | `git --version` |
+
+### Instalar `uv`
+
+El backend usa [uv](https://docs.astral.sh/uv/) para gestionar el entorno y las
+dependencias. No viene preinstalado en Codespaces ni en la mayoría de sistemas:
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+source $HOME/.local/bin/env      # o abre una terminal nueva
+uv --version
+```
+
+Si al correr `uv sync` obtienes `bash: uv: command not found`, es esto: falta
+instalarlo, o falta el `source` para que la terminal actual lo encuentre.
 
 > 🖥️ **Usuarios de Windows**: Se recomienda utilizar **Git Bash** o **WSL2** para ejecutar comandos con sintaxis bash uniforme.
 

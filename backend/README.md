@@ -29,6 +29,8 @@ La API queda en <http://localhost:8000> y la documentación interactiva en
 ### Sin Docker
 
 ```bash
+# Si no tienes uv:  curl -LsSf https://astral.sh/uv/install.sh | sh
+#                   source $HOME/.local/bin/env
 cd backend
 uv sync                                 # crea .venv e instala dependencias
 cp .env.example .env                    # DB_HOST=127.0.0.1

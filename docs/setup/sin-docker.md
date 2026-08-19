@@ -42,6 +42,10 @@ mysql -u root -p -e "CREATE DATABASE globde CHARACTER SET utf8mb4 COLLATE utf8mb
 ```bash
 cd backend
 
+# Instalar uv si no lo tienes (no viene preinstalado en Codespaces):
+#   curl -LsSf https://astral.sh/uv/install.sh | sh
+#   source $HOME/.local/bin/env
+
 # Crear entorno virtual e instalar dependencias (uv lo hace en un solo paso)
 uv sync
 
