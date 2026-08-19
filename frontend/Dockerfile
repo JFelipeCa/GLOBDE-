@@ -1,7 +1,7 @@
 # Frontend GLOBDE - entorno de desarrollo con Vite.
 # Sirve la app en :5173 y redirige /api al backend por el proxy de Vite,
 # de modo que el navegador nunca necesita conocer la URL del backend.
-FROM node:20-slim
+FROM node:22-slim
 
 RUN corepack enable && corepack prepare pnpm@11 --activate
 

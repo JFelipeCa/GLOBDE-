@@ -55,7 +55,7 @@ Antes de comenzar, asegúrate de contar con el siguiente software instalado:
 | Herramienta | Versión mínima recomendada | Comando de verificación |
 | :--- | :--- | :--- |
 | **Python** | 3.12+ | `python3 --version` o `python --version` |
-| **Node.js** | 20 LTS+ | `node --version` |
+| **Node.js** | 22 LTS+ | `node --version` |
 | **npm** o **pnpm** | npm 10+ / pnpm 9+ | `npm --version` o `pnpm --version` |
 | **Docker** | 24.0+ | `docker --version` |
 | **Docker Compose** | 2.20+ | `docker compose version` |

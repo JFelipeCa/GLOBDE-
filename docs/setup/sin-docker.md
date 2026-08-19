@@ -8,7 +8,7 @@
 
 > **Requisitos Previos**:
 > - Python 3.12+ instalado (`python --version`)
-> - Node.js 20 LTS+ y npm 10+ (`node --version`, `npm --version`)
+> - Node.js 22 LTS+ y pnpm 9+ (`node --version`, `pnpm --version`)
 > - Servidor MySQL 8.0+ instalado y corriendo localmente (`mysql --version`)
 
 ---
