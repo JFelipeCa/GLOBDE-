@@ -5,7 +5,7 @@ services:
     container_name: globde_mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:?Error: define DB_PASSWORD en tu archivo .env antes de levantar el proyecto}
+      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD:?Error: define DB_PASSWORD en tu archivo .env antes de levantar el proyecto}"
       MYSQL_DATABASE: ${DB_NAME:-globde}
     ports:
       - "3307:3306"
@@ -32,7 +32,7 @@ services:
      
       DB_HOST: mysql
       DB_PORT: 3306
-      DB_PASSWORD: ${DB_PASSWORD:?Error: define DB_PASSWORD en tu archivo .env antes de levantar el proyecto}
+      DB_PASSWORD: "${DB_PASSWORD:?Error: define DB_PASSWORD en tu archivo .env antes de levantar el proyecto}"
       DB_NAME: ${DB_NAME:-globde}
     ports:
       - "8000:8000"
