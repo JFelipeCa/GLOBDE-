@@ -20,7 +20,7 @@
 | Campo | Valor |
 |---|---|
 | **ID** | CU-32 |
-| **Historia de Usuario asociada** | [HU-32](../HUs/) |
+| **Historia de Usuario asociada** | [HU-032](../HUs/HU-032_exportaci%C3%B3n_de_reportes_a_excel_csv.md) |
 | **Módulo** | Reportes Administrativos |
 | **Actores** | Administrador |
 

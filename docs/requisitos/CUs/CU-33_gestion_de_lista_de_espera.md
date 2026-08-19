@@ -19,7 +19,7 @@
 | Campo | Valor |
 |---|---|
 | **ID** | CU-33 |
-| **Historia de Usuario asociada** | [HU-33](../HUs/) |
+| **Historia de Usuario asociada** | [HU-033](../HUs/HU-033_gesti%C3%B3n_de_lista_de_espera.md) |
 | **Módulo** | Lista de Espera |
 | **Actores** | Cliente, Sistema |
 

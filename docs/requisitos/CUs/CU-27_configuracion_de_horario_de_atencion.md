@@ -18,7 +18,7 @@
 | Campo | Valor |
 |---|---|
 | **ID** | CU-27 |
-| **Historia de Usuario asociada** | [HU-27](../HUs/) |
+| **Historia de Usuario asociada** | [HU-027](../HUs/HU-027_configuraci%C3%B3n_de_horario_comercial.md) |
 | **Módulo** | Configuracion del Negocio |
 | **Actores** | Administrador |
 

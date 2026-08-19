@@ -19,7 +19,7 @@
 | Campo | Valor |
 |---|---|
 | **ID** | CU-28 |
-| **Historia de Usuario asociada** | [HU-28](../HUs/) |
+| **Historia de Usuario asociada** | [HU-028](../HUs/HU-028_registro_de_d%C3%ADas_festivos_o_cierres.md) |
 | **Módulo** | Configuracion del Negocio |
 | **Actores** | Administrador |
 
