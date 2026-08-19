@@ -3,7 +3,7 @@
 # de modo que el navegador nunca necesita conocer la URL del backend.
 FROM node:22-slim
 
-RUN corepack enable && corepack prepare pnpm@11 --activate
+RUN corepack enable && corepack prepare pnpm@11.20.0 --activate
 
 WORKDIR /app
 
