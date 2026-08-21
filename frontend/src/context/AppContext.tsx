@@ -9,7 +9,7 @@ import {
   ROL_ADMINISTRADOR, ROL_BARBERO, ROL_CLIENTE,
 } from '../types';
 import {
-  USUARIOS, BARBEROS, SERVICIOS, CATALOGO_CORTES, PREMIOS,
+  BARBEROS, SERVICIOS, CATALOGO_CORTES, PREMIOS,
   CITAS, LISTA_ESPERA, FACTURAS, TESTIMONIOS, EXTRAS_SERVICIO,
 } from '../data/mockData';
 import {
@@ -62,7 +62,6 @@ interface ContextoApp {
   login: (correo: string, pwd: string) => Promise<Resultado>;
   registrar: (n: string, c: string, t: string, p: string) => Promise<Resultado>;
   logout: () => void;
-  cambiarRolDemo: (rol: TipoRol) => void;
 
   codigoRecuperacion: string | null;
   correoRecuperacion: string | null;
@@ -122,7 +121,10 @@ function mapUsuarioBackend(payload: Record<string, unknown>): Usuario {
     fecha_creacion: String(payload.fecha_creacion ?? hoyISO()),
     puntos,
     nivel_fidelizacion: nivelPorPuntos(puntos),
-    avatar_url: String(payload.avatar_url ?? 'https://images.pexels.com/photos/804009/pexels-photo-804009.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=200&w=200'),
+    avatar_url: String(payload.avatar_url ?? 'https://images.pexels.com/photos/804009/pexels-photo-804009.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=200&w=200&fm=webp'),
+    // PKs reales de `clientes` / `barberos`: el backend las exige al reservar.
+    id_cliente: payload.id_cliente != null ? Number(payload.id_cliente) : undefined,
+    id_barbero: payload.id_barbero != null ? Number(payload.id_barbero) : undefined,
   };
 }
 
@@ -166,6 +168,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const barberosBackend = Array.isArray(datos.usuarios) ? datos.usuarios.filter((u: Record<string, unknown>) => Number(u.id_rol) === ROL_BARBERO) : [];
         const rankingBackend = Array.isArray(datos.ranking_barberos) ? datos.ranking_barberos : [];
         const clientesBackend = Array.isArray(datos.clientes) ? datos.clientes : [];
+        const horariosBackend = Array.isArray(datos.horarios_barberos) ? datos.horarios_barberos : [];
+        const barberoServicioBackend = Array.isArray(datos.barbero_servicio) ? datos.barbero_servicio : [];
 
         if (serviciosBackend.length) {
           setServicios(serviciosBackend.map((s: Record<string, unknown>, index: number) => ({
@@ -177,7 +181,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             duracion_minutos: Number(s.duracion_minutos ?? 30),
             popular: Boolean(s.popular),
             icono: String(s.icono ?? '✂️'),
-            imagen_url: String(s.imagen_url ?? 'https://images.pexels.com/photos/34702982/pexels-photo-34702982.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=420&w=640'),
+            imagen_url: String(s.imagen_url ?? 'https://images.pexels.com/photos/34702982/pexels-photo-34702982.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=420&w=640&fm=webp'),
             puntos_otorga: Number(s.puntos_otorga ?? 20),
             activo: s.activo !== false,
           })));
@@ -187,8 +191,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           setBarberos(barberosBackend.map((u: Record<string, unknown>, index: number) => {
             const ranking = rankingBackend.find((r: Record<string, unknown>) => Number(r.id_usuario) === Number(u.id_usuario)) as Record<string, unknown> | undefined;
             const puntos = Number(u.puntos ?? 150);
+            // OJO: id_barbero es la PK de la tabla `barberos` y NO coincide con
+            // id_usuario (el usuario 2 es el barbero 1). El backend espera esta.
+            const idBarbero = Number(u.id_barbero ?? index + 1);
+            const jornadas = horariosBackend
+              .filter((h: Record<string, unknown>) => Number(h.id_barbero) === idBarbero)
+              .map((h: Record<string, unknown>) => ({
+                dia_semana: Number(h.dia_semana),
+                hora_inicio: String(h.hora_inicio ?? '08:00'),
+                hora_fin: String(h.hora_fin ?? '20:00'),
+              }));
+            const aperturas = jornadas.map((j) => j.hora_inicio).sort();
+            const cierres = jornadas.map((j) => j.hora_fin).sort();
+            const serviciosIds = barberoServicioBackend
+              .filter((r: Record<string, unknown>) => Number(r.id_barbero) === idBarbero)
+              .map((r: Record<string, unknown>) => Number(r.id_servicio));
             return {
-              id_barbero: Number(u.id_usuario ?? index + 1),
+              id_barbero: idBarbero,
               id_usuario: Number(u.id_usuario ?? index + 1),
               nombre: String(u.nombre ?? `Barbero ${index + 1}`),
               rol_titulo: String(u.rol_titulo ?? 'Barbero certificado'),
@@ -197,14 +216,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               rating: Number(u.rating ?? 4.8),
               total_resenas: Number(u.total_resenas ?? 120),
               especialidades: Array.isArray(u.especialidades) ? u.especialidades.map(String) : ['Corte profesional'],
-              foto_url: String(u.avatar_url ?? 'https://images.pexels.com/photos/12304510/pexels-photo-12304510.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=700&w=600'),
+              foto_url: String(u.foto_url ?? u.avatar_url ?? 'https://images.pexels.com/photos/12304510/pexels-photo-12304510.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=700&w=600&fm=webp'),
               disponible_hoy: true,
-              hora_apertura: '08:00',
-              hora_cierre: '20:00',
+              hora_apertura: aperturas[0] ?? '08:00',
+              hora_cierre: cierres[cierres.length - 1] ?? '20:00',
               porcentaje_incremento: Number(ranking?.porcentaje_incremento ?? 10),
               citas_completadas: Number(ranking?.total_citas ?? 0),
               bio: String(u.bio ?? 'Barbero certificado de Globde.'),
               color: '#D4AF37',
+              horarios: jornadas,
+              servicios_ids: serviciosIds,
             };
           }));
         }
@@ -216,6 +237,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           setCitas(citasBackend.map((c: Record<string, unknown>, index: number) => {
             const servicio = serviciosMap.get(Number(c.id_servicio)) as Record<string, unknown> | undefined;
             const barbero = usuariosMap.get(Number(c.id_usuario)) as Record<string, unknown> | undefined;
+            // Las franjas ocupadas se cruzan por id_barbero, no por id_usuario.
             const cliente = clientesMap.get(Number(c.id_cliente)) as Record<string, unknown> | undefined ?? usuariosMap.get(Number(c.id_cliente));
             const inicio = String(c.hora ?? '12:00');
             const duracion = Number(servicio?.duracion_minutos ?? 30);
@@ -227,7 +249,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               cliente_nombre: String(cliente?.nombre ?? 'Cliente Globde'),
               cliente_telefono: String(cliente?.telefono ?? '+57 300 000 0000'),
               cliente_correo: String(cliente?.correo ?? 'cliente@globde.com'),
-              id_barbero: Number(c.id_usuario ?? 0),
+              id_barbero: Number(c.id_barbero ?? 0),
               barbero_nombre: String(barbero?.nombre ?? 'Barbero Globde'),
               id_servicio: Number(c.id_servicio ?? 1),
               servicio_nombre: String(servicio?.nombre ?? 'Servicio'),
@@ -346,7 +368,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         fecha_creacion: hoyISO(),
         puntos: 150,
         nivel_fidelizacion: 'Plata',
-        avatar_url: 'https://images.pexels.com/photos/14564834/pexels-photo-14564834.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=200&w=200',
+        avatar_url: 'https://images.pexels.com/photos/14564834/pexels-photo-14564834.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=200&w=200&fm=webp',
       };
       setUsuario(nuevo);
       setModalAuth(false);
@@ -364,13 +386,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setUsuario(null);
     irA('inicio');
     notificar('Sesión cerrada', 'Esperamos verte pronto de nuevo.', 'sistema');
-  };
-
-  const cambiarRolDemo = (rol: TipoRol) => {
-    const perfil = rol === ROL_ADMINISTRADOR ? USUARIOS[0] : rol === ROL_BARBERO ? USUARIOS[1] : USUARIOS[3];
-    setUsuario(perfil);
-    irAPanel(rol);
-    notificar(`Modo ${rol === ROL_ADMINISTRADOR ? 'Administrador' : rol === ROL_BARBERO ? 'Barbero' : 'Cliente'} activo`, `Explorando la plataforma como ${perfil.nombre}.`, 'sistema');
   };
 
   const solicitarCodigo = (correo: string): Resultado => {
@@ -435,15 +450,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return { ok: false, mensaje: 'Ese rango horario ya está ocupado. Elige otra franja disponible.' };
     }
 
+    // El backend exige la PK de `clientes`. Antes se enviaba id_usuario con 999
+    // de respaldo y respondia 404 "El cliente no existe".
+    if (!usuario?.id_cliente) {
+      return {
+        ok: false,
+        mensaje: usuario
+          ? 'Tu perfil no tiene una ficha de cliente asociada. Inicia sesión con una cuenta de cliente para reservar.'
+          : 'Inicia sesión como cliente para confirmar la reserva.',
+      };
+    }
+
     try {
       const response = await apiRequest<Record<string, unknown>>('/citas', {
         method: 'POST',
         body: JSON.stringify({
-          id_cliente: usuario?.id_usuario ?? 999,
-          id_usuario: barbero.id_usuario,
+          id_cliente: usuario.id_cliente,
+          id_barbero: barbero.id_barbero,
           id_servicio: servicio.id_servicio,
           fecha: d.fecha,
-          hora: d.hora_inicio,
+          hora_inicio: d.hora_inicio,
           estado: 'confirmada',
           observaciones: d.observaciones,
         }),
@@ -451,7 +477,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const nueva: Cita = {
         id_cita: Number(response.id_cita ?? Date.now()),
         codigo_reserva: `GLB-${String(response.id_cita ?? Date.now()).padStart(4, '0')}`,
-        id_cliente: Number(response.id_cliente ?? usuario?.id_usuario ?? 999),
+        id_cliente: Number(response.id_cliente ?? usuario.id_cliente),
         cliente_nombre: d.nombre || usuario?.nombre || 'Cliente',
         cliente_telefono: d.telefono || usuario?.telefono || '',
         cliente_correo: d.correo || usuario?.correo || '',
@@ -574,7 +600,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           texto: comentario,
           rating,
           barbero_favorito: cita.barbero_nombre,
-          avatar_url: usuario?.avatar_url ?? 'https://images.pexels.com/photos/804009/pexels-photo-804009.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=140&w=140',
+          avatar_url: usuario?.avatar_url ?? 'https://images.pexels.com/photos/804009/pexels-photo-804009.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=140&w=140&fm=webp',
           corte: cita.servicio_nombre,
           fecha: 'Reciente',
         },
@@ -664,7 +690,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         login,
         registrar,
         logout,
-        cambiarRolDemo,
         codigoRecuperacion,
         correoRecuperacion,
         solicitarCodigo,

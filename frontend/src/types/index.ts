@@ -16,6 +16,10 @@ export interface Usuario {
   avatar_url?: string;
   puntos: number;
   nivel_fidelizacion: NivelFidelizacion;
+  /** PK de la tabla `clientes`. No coincide con id_usuario. */
+  id_cliente?: number;
+  /** PK de la tabla `barberos`. No coincide con id_usuario. */
+  id_barbero?: number;
 }
 
 export interface Barbero {
@@ -36,6 +40,10 @@ export interface Barbero {
   citas_completadas: number;
   bio: string;
   color: string; // color de acento para la agenda
+  /** Jornada real por dia (1=Lunes … 7=Domingo). */
+  horarios?: { dia_semana: number; hora_inicio: string; hora_fin: string }[];
+  /** Servicios que este barbero presta. */
+  servicios_ids?: number[];
 }
 
 export type CategoriaServicio = 'Cortes' | 'Barba' | 'Combos' | 'Tratamientos' | 'Infantil';
