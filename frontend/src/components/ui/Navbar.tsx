@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   Scissors, CalendarDays, Crown, Sparkles, Menu, X, LogOut,
   LayoutDashboard, ChevronDown, Clock, UserRound, MapPin,
@@ -9,12 +9,27 @@ import type { Vista } from '../../types';
 
 export const Navbar: React.FC = () => {
   const {
-    usuario, logout, cambiarRolDemo, abrirAuth, abrirReserva,
+    usuario, logout, abrirAuth, abrirReserva,
     vista, irA, setQuizAbierto, setEsperaAbierta,
   } = useApp();
 
   const [menu, setMenu] = useState(false);
   const [perfil, setPerfil] = useState(false);
+
+  // La cinta decia "Abierto hoy" a cualquier hora y cualquier dia. Ahora
+  // refleja el reloj real: el domingo la barberia no abre.
+  const estadoHorario = useMemo(() => {
+    const ahora = new Date();
+    const dia = ahora.getDay(); // 0 = domingo
+    const minutos = ahora.getHours() * 60 + ahora.getMinutes();
+    if (dia === 0) return 'Cerrado hoy · Abrimos el lunes a las 8:00 a.m.';
+    const abre = 8 * 60;
+    const cierra = dia === 6 ? 15 * 60 : 20 * 60; // sábado hasta las 3:00 p.m.
+    const cierreTexto = dia === 6 ? '3:00 p.m.' : '8:00 p.m.';
+    if (minutos < abre) return `Cerrado ahora · Abrimos hoy a las 8:00 a.m.`;
+    if (minutos >= cierra) return 'Cerrado ahora · Abrimos mañana a las 8:00 a.m.';
+    return `Abierto ahora · Hasta las ${cierreTexto}`;
+  }, []);
 
   const ir = (v: Vista) => { irA(v); setMenu(false); setPerfil(false); };
 
@@ -39,30 +54,11 @@ export const Navbar: React.FC = () => {
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-60" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-400" />
             </span>
-            Abierto hoy · 8:00 a.m. – 8:00 p.m.
+            {estadoHorario}
             <span className="hidden opacity-70 sm:inline">· Calle 85 #14-20, Bogotá</span>
           </span>
 
-          <div className="flex items-center gap-1.5">
-            <span className="hidden font-semibold opacity-80 md:inline">Ver la app como:</span>
-            <div className="flex items-center gap-0.5 rounded-full bg-white/10 p-0.5">
-              {[
-                { rol: ROL_CLIENTE, t: 'Cliente' },
-                { rol: ROL_BARBERO, t: 'Barbero' },
-                { rol: ROL_ADMINISTRADOR, t: 'Admin' },
-              ].map((o) => (
-                <button
-                  key={o.t}
-                  onClick={() => cambiarRolDemo(o.rol as 1 | 2 | 3)}
-                  className={`rounded-full px-2.5 py-0.5 font-bold transition ${
-                    usuario?.id_rol === o.rol ? 'bg-amber-400 text-[#1A1400] shadow-sm' : 'text-white/80 hover:bg-white/10'
-                  }`}
-                >
-                  {o.t}
-                </button>
-              ))}
-            </div>
-          </div>
+          <span className="hidden opacity-70 sm:inline">Reserva en línea · Respuesta inmediata</span>
         </div>
       </div>
 

@@ -4,7 +4,6 @@ import {
   Eye, EyeOff, Check, KeyRound, CircleAlert, MailCheck, RotateCcw,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { ROL_ADMINISTRADOR, ROL_BARBERO, ROL_CLIENTE } from '../../types';
 import { evaluarPassword, validarCorreo, validarNombre, validarTelefono } from '../../utils/helpers';
 
 /* ---------- Medidor de contraseña reutilizable ---------- */
@@ -57,12 +56,15 @@ const Campo: React.FC<{
   </div>
 );
 
+/** Contrasena de las cuentas de la semilla (solo entornos de prueba). */
+const CLAVE_DEMO = 'Globde2025*';
+
 const inputCls =
   'w-full rounded-xl border border-white/10 bg-[#0F151C] px-3.5 py-2.5 text-sm text-[#EAF0F6] placeholder-[#5A6878] outline-none transition focus:border-amber-400 focus:ring-4 focus:ring-amber-400/15';
 
 export const AuthModal: React.FC = () => {
   const {
-    modalAuth, abrirAuth, cerrarAuth, login, registrar, cambiarRolDemo,
+    modalAuth, abrirAuth, cerrarAuth, login, registrar,
     solicitarCodigo, verificarCodigo, restablecerPassword, limpiarRecuperacion,
   } = useApp();
 
@@ -226,17 +228,21 @@ export const AuthModal: React.FC = () => {
                 </p>
                 <div className="grid grid-cols-3 gap-2">
                   {[
-                    { rol: ROL_CLIENTE, t: 'Cliente', c: 'border-amber-400/30 bg-amber-400/10 text-amber-700' },
-                    { rol: ROL_BARBERO, t: 'Barbero', c: 'border-neutral-400/40 bg-neutral-500/10 text-neutral-800' },
-                    { rol: ROL_ADMINISTRADOR, t: 'Admin', c: 'border-neutral-900/40 bg-neutral-900/10 text-neutral-900' },
+                    { t: 'Cliente', correo: 'cliente1@example.com', c: 'border-amber-400/30 bg-amber-400/10 text-amber-700' },
+                    { t: 'Barbero', correo: 'barbero1@globde.test', c: 'border-neutral-400/40 bg-neutral-500/10 text-neutral-800' },
+                    { t: 'Admin', correo: 'admin@globde.test', c: 'border-neutral-900/40 bg-neutral-900/10 text-neutral-900' },
                   ].map((o) => (
                     <button key={o.t} type="button"
-                      onClick={() => { cambiarRolDemo(o.rol as 1 | 2 | 3); cerrar(); }}
+                      onClick={() => { setCorreo(o.correo); setContrasena(CLAVE_DEMO); setError(''); }}
                       className={`rounded-xl border py-1.5 text-[11px] font-bold transition hover:brightness-125 ${o.c}`}>
                       {o.t}
                     </button>
                   ))}
                 </div>
+                <p className="mt-2 text-[10px] leading-snug text-[#5A6878]">
+                  Rellena el formulario con una cuenta real de la base de datos. Pulsa
+                  «Entrar a mi cuenta» para iniciar sesión de verdad.
+                </p>
               </div>
             </form>
           )}
