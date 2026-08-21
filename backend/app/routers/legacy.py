@@ -131,6 +131,9 @@ def _usuario_v1(fila: dict, especialidades: dict[int, list[str]] | None = None) 
         "rating": float(fila.get("rating") or 0),
         "total_resenas": int(fila.get("total_resenas") or 0),
         "bio": fila.get("bio") or "Barbero certificado de Globde.",
+        # La foto del barbero vive en barberos.foto_url; si no la tiene, se
+        # cae al avatar del usuario.
+        "foto_url": fila.get("foto_url") or fila.get("avatar_url"),
         "especialidades": lista_esp or ["Corte profesional"],
         "id_barbero": int(id_barbero) if id_barbero else None,
         "id_cliente": int(fila["id_cliente"]) if fila.get("id_cliente") else None,
@@ -163,6 +166,7 @@ def datos_iniciales() -> dict:
                   u.activo, u.avatar_url, u.creado_en,
                   b.id_barbero, b.titulo, b.experiencia_anios, b.bio,
                   b.rating, b.total_resenas, b.citas_completadas, b.color,
+                  b.foto_url,
                   c.id_cliente, c.puntos_saldo, c.nivel_fidelizacion
            FROM usuarios u
            LEFT JOIN barberos b ON b.id_usuario = u.id_usuario
@@ -207,9 +211,41 @@ def datos_iniciales() -> dict:
             }
         )
 
+    # Jornada real de cada barbero. Sin esto el frontend ofrecia franjas de
+    # 08:00 a 20:00 para todos y el backend rechazaba la cita al confirmar.
+    horarios_barberos = [
+        {
+            "id_barbero": int(h["id_barbero"]),
+            "dia_semana": int(h["dia_semana"]),
+            "hora_inicio": _hhmm(h.get("hora_inicio")),
+            "hora_fin": _hhmm(h.get("hora_fin")),
+        }
+        for h in fetch_all(
+            """SELECT id_barbero, dia_semana, hora_inicio, hora_fin
+               FROM horarios_barbero
+               WHERE activo = 1
+               ORDER BY id_barbero, dia_semana"""
+        )
+    ]
+
+    # Que servicio presta cada barbero, para no ofrecer combinaciones que el
+    # backend rechaza con "El barbero seleccionado no presta ese servicio".
+    barbero_servicio = [
+        {"id_barbero": int(r["id_barbero"]), "id_servicio": int(r["id_servicio"])}
+        for r in fetch_all(
+            """SELECT bs.id_barbero, bs.id_servicio
+               FROM barbero_servicio bs
+               JOIN servicios s ON s.id_servicio = bs.id_servicio
+               WHERE bs.activo = 1 AND s.activo = 1
+               ORDER BY bs.id_barbero, bs.id_servicio"""
+        )
+    ]
+
     return {
         "roles": fetch_all("SELECT id_rol, nombre FROM roles ORDER BY id_rol"),
         "usuarios": usuarios,
+        "horarios_barberos": horarios_barberos,
+        "barbero_servicio": barbero_servicio,
         "clientes": clientes,
         "servicios": servicios,
         "citas": citas_v1,
