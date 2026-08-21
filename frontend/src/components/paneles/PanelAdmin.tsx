@@ -7,7 +7,7 @@ import { useApp } from '../../context/AppContext';
 import type { Cita, CategoriaServicio, EstadoCita } from '../../types';
 import {
   formatoCOP, fechaLarga, rangoHorario, duracionLegible, estiloEstado,
-  paginar, generarFranjas, sumarMinutos, hora12, haySolape, sumarDiasISO, desglosarFecha,
+  paginar, generarFranjas, franjasVigentes, sumarMinutos, hora12, haySolape, sumarDiasISO, desglosarFecha,
 } from '../../utils/helpers';
 
 const POR_PAGINA = 6;
@@ -73,7 +73,10 @@ export const PanelAdmin: React.FC = () => {
   const barbEdit = barberos.find((b) => b.id_barbero === eBarbero) ?? barberos[0];
   const ocupEdit = edit ? franjasOcupadas(eFecha, eBarbero) : [];
   const franjasEdit = edit
-    ? generarFranjas(barbEdit.hora_apertura, barbEdit.hora_cierre, 15, servEdit.duracion_minutos).map((ini) => {
+    ? franjasVigentes(
+        generarFranjas(barbEdit.hora_apertura, barbEdit.hora_cierre, 15, servEdit.duracion_minutos),
+        eFecha,
+      ).map((ini) => {
         const fin = sumarMinutos(ini, servEdit.duracion_minutos);
         const propia = edit.fecha === eFecha && edit.hora_inicio === ini && edit.id_barbero === eBarbero;
         return { ini, fin, libre: propia || !ocupEdit.some((o) => haySolape(ini, fin, o.inicio, o.fin)) };

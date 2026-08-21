@@ -89,6 +89,18 @@ export const generarFranjas = (
   return franjas;
 };
 
+/**
+ * Descarta las franjas que ya pasaron cuando `fecha` es hoy.
+ * No tiene sentido ofrecer las 08:00 si ya es la 1 de la tarde.
+ * Para fechas futuras devuelve la lista intacta.
+ */
+export const franjasVigentes = (franjas: string[], fecha: string): string[] => {
+  if (fecha !== hoyISO()) return franjas;
+  const ahora = new Date();
+  const minutosAhora = ahora.getHours() * 60 + ahora.getMinutes();
+  return franjas.filter((f) => aMinutos(f) > minutosAhora);
+};
+
 /** ¿Se cruzan dos rangos horarios? */
 export const haySolape = (
   aIni: string,

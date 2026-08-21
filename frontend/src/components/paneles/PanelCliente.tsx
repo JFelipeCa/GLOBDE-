@@ -7,7 +7,7 @@ import { useApp } from '../../context/AppContext';
 import type { Cita } from '../../types';
 import {
   formatoCOP, fechaLarga, rangoHorario, duracionLegible, estiloEstado,
-  hoyISO, sumarDiasISO, generarFranjas, sumarMinutos, hora12, haySolape, desglosarFecha,
+  hoyISO, sumarDiasISO, generarFranjas, franjasVigentes, sumarMinutos, hora12, haySolape, desglosarFecha,
 } from '../../utils/helpers';
 
 const MOTIVOS = [
@@ -53,7 +53,10 @@ export const PanelCliente: React.FC = () => {
   const barberoRep = barberos.find((b) => b.id_barbero === aReprogramar?.id_barbero) ?? barberos[0];
   const ocupadasRep = aReprogramar ? franjasOcupadas(nFecha, aReprogramar.id_barbero) : [];
   const franjasRep = aReprogramar
-    ? generarFranjas(barberoRep.hora_apertura, barberoRep.hora_cierre, 15, aReprogramar.duracion_minutos).map((ini) => {
+    ? franjasVigentes(
+        generarFranjas(barberoRep.hora_apertura, barberoRep.hora_cierre, 15, aReprogramar.duracion_minutos),
+        nFecha,
+      ).map((ini) => {
         const fin = sumarMinutos(ini, aReprogramar.duracion_minutos);
         const propia = aReprogramar.fecha === nFecha && aReprogramar.hora_inicio === ini;
         return { ini, fin, libre: propia || !ocupadasRep.some((o) => haySolape(ini, fin, o.inicio, o.fin)) };

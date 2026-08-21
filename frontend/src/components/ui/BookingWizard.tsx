@@ -6,7 +6,7 @@ import {
 import { useApp } from '../../context/AppContext';
 import { EXTRAS_SERVICIO } from '../../data/mockData';
 import {
-  formatoCOP, hoyISO, sumarDiasISO, desglosarFecha, generarFranjas,
+  formatoCOP, hoyISO, sumarDiasISO, desglosarFecha, generarFranjas, franjasVigentes,
   sumarMinutos, hora12, duracionLegible, haySolape, fechaLarga,
 } from '../../utils/helpers';
 
@@ -54,14 +54,39 @@ export const BookingWizard: React.FC = () => {
   const dias = useMemo(() => Array.from({ length: 10 }, (_, i) => sumarDiasISO(i)), []);
   const ocupadas = franjasOcupadas(fecha, idBarbero);
 
+  // Solo los barberos que prestan el servicio elegido. Si el backend no envio
+  // la relacion, se muestran todos para no dejar el paso vacio.
+  const barberosDisponibles = useMemo(
+    () =>
+      barberos.filter(
+        (b) => !b.servicios_ids?.length || b.servicios_ids.includes(idServicio)
+      ),
+    [barberos, idServicio]
+  );
+
+  // Domingo debe ser 7, no 0 (el backend usa 1=Lunes … 7=Domingo).
+  const diaSemana = useMemo(() => {
+    const [a, m, d] = fecha.split('-').map(Number);
+    return new Date(a, m - 1, d).getDay() || 7;
+  }, [fecha]);
+
+  const jornadaDelDia = barbero.horarios?.filter((h) => h.dia_semana === diaSemana) ?? [];
+  const barberoDescansa = Boolean(barbero.horarios?.length) && jornadaDelDia.length === 0;
+
   const franjas = useMemo(() => {
-    const base = generarFranjas(barbero.hora_apertura, barbero.hora_cierre, 15, duracionTotal);
-    return base.map((ini) => {
-      const fin = sumarMinutos(ini, duracionTotal);
-      const libre = !ocupadas.some((o) => haySolape(ini, fin, o.inicio, o.fin));
-      return { ini, fin, libre };
-    });
-  }, [barbero, duracionTotal, ocupadas]);
+    // Se generan solo las horas de la jornada real de ese barbero ese dia.
+    const base = barbero.horarios?.length
+      ? jornadaDelDia.flatMap((j) => generarFranjas(j.hora_inicio, j.hora_fin, 15, duracionTotal))
+      : generarFranjas(barbero.hora_apertura, barbero.hora_cierre, 15, duracionTotal);
+
+    // Si la fecha es hoy, no tiene sentido ofrecer horas que ya pasaron.
+    return franjasVigentes(base, fecha)
+      .map((ini) => {
+        const fin = sumarMinutos(ini, duracionTotal);
+        const libre = !ocupadas.some((o) => haySolape(ini, fin, o.inicio, o.fin));
+        return { ini, fin, libre };
+      });
+  }, [barbero, jornadaDelDia, duracionTotal, ocupadas, fecha]);
 
   const franjasManana = franjas.filter((f) => Number(f.ini.split(':')[0]) < 13);
   const franjasTarde = franjas.filter((f) => Number(f.ini.split(':')[0]) >= 13);
@@ -75,6 +100,12 @@ export const BookingWizard: React.FC = () => {
 
   const siguiente = () => {
     setError('');
+    // Si al cambiar de servicio el barbero elegido ya no lo presta, se reasigna.
+    if (paso === 1 && !barberosDisponibles.some((b) => b.id_barbero === idBarbero)) {
+      if (!barberosDisponibles.length) return setError('Ningún barbero presta ese servicio todavía.');
+      setIdBarbero(barberosDisponibles[0].id_barbero);
+      setHoraInicio('');
+    }
     if (paso === 3 && !horaInicio) return setError('Selecciona una franja horaria disponible para continuar.');
     setPaso((p) => Math.min(4, p + 1));
   };
@@ -184,7 +215,12 @@ export const BookingWizard: React.FC = () => {
           {paso === 2 && (
             <div className="anim-aparecer space-y-3">
               <h4 className="font-heading text-lg font-black text-[#EAF0F6]">Elige a tu barbero</h4>
-              {barberos.map((b) => (
+              {!barberosDisponibles.length && (
+                <p className="rounded-2xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm font-semibold text-amber-700">
+                  Ningún barbero presta este servicio por ahora. Vuelve al paso anterior y elige otro.
+                </p>
+              )}
+              {barberosDisponibles.map((b) => (
                 <button
                   key={b.id_barbero} onClick={() => { setIdBarbero(b.id_barbero); setHoraInicio(''); }}
                   className={`card card-hover flex w-full items-center gap-4 p-4 text-left ${idBarbero === b.id_barbero ? 'ring-2 ring-amber-400' : ''}`}
@@ -216,6 +252,10 @@ export const BookingWizard: React.FC = () => {
             <div className="anim-aparecer space-y-5">
               <div>
                 <h4 className="font-heading text-lg font-black text-[#EAF0F6]">Selecciona el día</h4>
+                <p className="mt-1 text-sm text-[#EAF0F6]/60">
+                  Solo mostramos los turnos que {barbero.nombre.split(' ')[0]} tiene libres según su
+                  jornada. Si eliges hoy, las horas que ya pasaron desaparecen de la lista.
+                </p>
                 <div className="mt-3 flex gap-2 overflow-x-auto pb-2">
                   {dias.map((d) => {
                     const inf = desglosarFecha(d);
@@ -247,16 +287,29 @@ export const BookingWizard: React.FC = () => {
                   </span>
                 </div>
 
-                <p className="mt-3 text-[11px] font-semibold text-[#6B7A8C]">MAÑANA</p>
-                <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4">
-                  {franjasManana.length ? franjasManana.map((f) => <BotonFranja key={f.ini} f={f} />)
-                    : <p className="col-span-4 text-xs text-[#6B7A8C]">Sin turnos en la mañana para este barbero.</p>}
-                </div>
+                {barberoDescansa ? (
+                  <p className="mt-3 rounded-2xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm font-semibold text-amber-700">
+                    {barbero.nombre.split(' ')[0]} no atiende este día. Elige otra fecha u otro barbero.
+                  </p>
+                ) : !franjas.length ? (
+                  <p className="mt-3 rounded-2xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm font-semibold text-amber-700">
+                    No quedan turnos disponibles para este día. Prueba con la siguiente fecha.
+                  </p>
+                ) : (
+                  <>
+                    <p className="mt-3 text-[11px] font-semibold text-[#6B7A8C]">MAÑANA</p>
+                    <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4">
+                      {franjasManana.length ? franjasManana.map((f) => <BotonFranja key={f.ini} f={f} />)
+                        : <p className="col-span-4 text-xs text-[#6B7A8C]">Sin turnos en la mañana para este barbero.</p>}
+                    </div>
 
-                <p className="mt-4 text-[11px] font-semibold text-[#6B7A8C]">TARDE Y NOCHE</p>
-                <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4">
-                  {franjasTarde.map((f) => <BotonFranja key={f.ini} f={f} />)}
-                </div>
+                    <p className="mt-4 text-[11px] font-semibold text-[#6B7A8C]">TARDE Y NOCHE</p>
+                    <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4">
+                      {franjasTarde.length ? franjasTarde.map((f) => <BotonFranja key={f.ini} f={f} />)
+                        : <p className="col-span-4 text-xs text-[#6B7A8C]">Sin turnos en la tarde para este barbero.</p>}
+                    </div>
+                  </>
+                )}
 
                 {horaInicio && (
                   <div className="anim-aparecer mt-4 flex items-center gap-2 rounded-2xl border border-amber-400/30 bg-amber-400/10 p-3 text-sm font-bold text-amber-700">
