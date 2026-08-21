@@ -73,13 +73,13 @@ export const Hero: React.FC = () => {
 
           <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#141A21] p-2 shadow-[0_40px_90px_-40px_rgba(0,0,0,1)]">
             <img
-              src="https://images.pexels.com/photos/34702982/pexels-photo-34702982.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=760&w=680"
+              src="https://images.pexels.com/photos/34702982/pexels-photo-34702982.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=760&w=680&fm=webp"
               alt="Barbero atendiendo a un cliente en Globde"
               className="h-[440px] w-full rounded-[1.6rem] object-cover"
             />
 
             <div className="anim-flotar absolute left-6 top-6 flex items-center gap-2.5 rounded-2xl border border-white/10 bg-[#0B0F14]/90 p-2.5 pr-4 shadow-xl backdrop-blur">
-              <img src="https://images.pexels.com/photos/12304510/pexels-photo-12304510.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=120&w=120" alt="Carlos" className="h-10 w-10 rounded-xl object-cover" />
+              <img src="https://images.pexels.com/photos/12304510/pexels-photo-12304510.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=120&w=120&fm=webp" alt="Carlos" className="h-10 w-10 rounded-xl object-cover" />
               <div>
                 <p className="text-xs font-black text-[#EAF0F6]">Carlos Méndez</p>
                 <p className="flex items-center gap-1 text-[10px] font-bold text-emerald-300">

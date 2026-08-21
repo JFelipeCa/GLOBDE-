@@ -50,7 +50,7 @@ INSERT INTO usuarios (
 (
     1,
     1,
-    'Admin Globde',
+    'Andrés Felipe Rojas',
     'admin@globde.test',
     '3000000001',
     '$2b$12$bGT/EBbM0WSG2cGWUNAdyekqEhjqv7yrj3dY5wF/1plwLwXvGaS4W',
@@ -61,7 +61,7 @@ INSERT INTO usuarios (
 (
     2,
     2,
-    'Barbero Demo Uno',
+    'Santiago Mejía Ortega',
     'barbero1@globde.test',
     '3000000002',
     '$2b$12$bGT/EBbM0WSG2cGWUNAdyekqEhjqv7yrj3dY5wF/1plwLwXvGaS4W',
@@ -72,7 +72,7 @@ INSERT INTO usuarios (
 (
     3,
     2,
-    'Barbero Demo Dos',
+    'Camilo Andrés Restrepo',
     'barbero2@globde.test',
     '3000000003',
     '$2b$12$bGT/EBbM0WSG2cGWUNAdyekqEhjqv7yrj3dY5wF/1plwLwXvGaS4W',
@@ -83,7 +83,7 @@ INSERT INTO usuarios (
 (
     4,
     3,
-    'Cliente Demo Uno',
+    'Mariana Gómez Salazar',
     'cliente1@example.com',
     '3000000004',
     '$2b$12$bGT/EBbM0WSG2cGWUNAdyekqEhjqv7yrj3dY5wF/1plwLwXvGaS4W',
@@ -94,7 +94,7 @@ INSERT INTO usuarios (
 (
     5,
     3,
-    'Cliente Demo Dos',
+    'Julián Esteban Vargas',
     'cliente2@example.com',
     '3000000005',
     '$2b$12$bGT/EBbM0WSG2cGWUNAdyekqEhjqv7yrj3dY5wF/1plwLwXvGaS4W',
@@ -105,7 +105,7 @@ INSERT INTO usuarios (
 (
     6,
     3,
-    'Cliente Demo Tres',
+    'Valentina Ruiz Cárdenas',
     'cliente3@example.com',
     '3000000006',
     '$2b$12$bGT/EBbM0WSG2cGWUNAdyekqEhjqv7yrj3dY5wF/1plwLwXvGaS4W',
@@ -143,9 +143,9 @@ INSERT INTO barberos (
     1,
     2,
     'Barbero Senior',
-    5,
-    'Especialista en cortes clásicos, degradados y arreglo de barba.',
-    NULL,
+    8,
+    'Ocho años detrás de la silla. Especialista en cortes clásicos, degradados a navaja y perfilado de barba.',
+    'https://images.pexels.com/photos/1319460/pexels-photo-1319460.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=700&w=600&fm=webp',
     4.80,
     25,
     120,
@@ -155,10 +155,10 @@ INSERT INTO barberos (
 (
     2,
     3,
-    'Barbero Profesional',
-    3,
-    'Especialista en cortes modernos, diseño y estilos juveniles.',
-    NULL,
+    'Barbero Estilista',
+    4,
+    'Apasionado por las tendencias urbanas: fades, diseños con línea y estilos juveniles.',
+    'https://images.pexels.com/photos/2076930/pexels-photo-2076930.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=700&w=600&fm=webp',
     4.60,
     18,
     86,
@@ -306,7 +306,7 @@ INSERT INTO bloqueos_agenda (
     hora_fin,
     motivo
 ) VALUES
-(1, '2026-09-16', '12:00:00', '13:00:00', 'Bloqueo demo por descanso')
+(1, '2026-09-16', '12:00:00', '13:00:00', 'Almuerzo')
     """)
     op.execute("""
 INSERT INTO citas (
@@ -338,7 +338,7 @@ INSERT INTO citas (
     42000.00,
     0.00,
     0,
-    'Cita demo completada.',
+    'Cliente puntual, corte habitual.',
     NULL
 ),
 (
@@ -354,7 +354,7 @@ INSERT INTO citas (
     30000.00,
     0.00,
     0,
-    'Cita demo confirmada.',
+    'Confirmada por WhatsApp.',
     NULL
 ),
 (
@@ -370,7 +370,7 @@ INSERT INTO citas (
     25000.00,
     0.00,
     0,
-    'Cita demo pendiente.',
+    'Pendiente de confirmar por el cliente.',
     NULL
 ),
 (
@@ -386,7 +386,7 @@ INSERT INTO citas (
     18000.00,
     0.00,
     0,
-    'Cita demo no asistida.',
+    'El cliente no se presentó ni avisó.',
     NULL
 )
     """)
@@ -415,7 +415,7 @@ INSERT INTO facturas (
     42000.00,
     'efectivo',
     'pagada',
-    'Factura demo generada para cita completada.',
+    'Pago en efectivo al finalizar el servicio.',
     '2026-08-10 11:05:00',
     '2026-08-10 11:05:00'
 )
@@ -466,7 +466,7 @@ INSERT INTO puntos_movimientos (
     'penalizacion',
     -20,
     340,
-    'Penalización demo por no asistencia.'
+    'Penalización por inasistencia sin aviso previo.'
 )
     """)
     op.execute("""
@@ -483,7 +483,7 @@ INSERT INTO resenas (
     1,
     1,
     5,
-    'Excelente servicio demo.',
+    'Excelente atención, quedé muy conforme con el degradado. Vuelvo sin duda.',
     TRUE
 )
     """)
@@ -500,7 +500,7 @@ INSERT INTO notificaciones (
     4,
     'cita',
     'Cita completada',
-    'Tu cita demo fue completada correctamente.',
+    'Tu cita fue completada. ¡Gracias por visitarnos!',
     FALSE,
     NULL
 ),
@@ -528,7 +528,7 @@ INSERT INTO penalidades (
     2,
     4,
     'no_asistencia',
-    'Penalidad demo por no asistir a la cita.',
+    'Se registró una penalidad por no asistir a tu cita.',
     20,
     0.00,
     'aplicada',
@@ -547,25 +547,25 @@ INSERT INTO catalogo_cortes (
 ) VALUES
 (
     1,
-    'Corte Clásico Demo',
+    'Clásico Caballero',
     'Clásico',
-    'Estilo tradicional para presentación en catálogo.',
+    'Corte atemporal con tijera, peinado hacia un lado y perfilado de patillas.',
     NULL,
     TRUE,
     TRUE
 ),
 (
     2,
-    'Degradado Demo',
+    'Fade Medio',
     'Moderno',
-    'Estilo degradado para presentación en catálogo.',
+    'Degradado progresivo a los lados con volumen y textura en la parte superior.',
     NULL,
     TRUE,
     TRUE
 ),
 (
     4,
-    'Combo Corte y Barba Demo',
+    'Combo Ejecutivo',
     'Combo',
     'Estilo completo para presentación en catálogo.',
     NULL,
